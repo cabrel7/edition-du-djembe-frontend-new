@@ -1,5 +1,46 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
-  devtools: { enabled: true }
+  devtools: { enabled: true },
+
+  modules: ['@nuxt/image', '@nuxtjs/sitemap', '@vueuse/nuxt'],
+
+  css: [
+    '@fontsource-variable/fraunces/index.css',
+    '@fontsource-variable/fraunces/wght-italic.css',
+    '@fontsource-variable/inter/index.css',
+    '~/assets/css/main.css',
+  ],
+
+  app: {
+    head: {
+      htmlAttrs: { lang: 'fr' },
+      meta: [
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
+        { name: 'theme-color', content: '#0C1A12' },
+        { name: 'format-detection', content: 'telephone=no' },
+      ],
+    },
+    pageTransition: { name: 'page', mode: 'out-in' },
+  },
+
+  runtimeConfig: {
+    public: {
+      siteUrl: 'https://leseditionsdudjembe.com',
+      // API Laravel — surcharge : NUXT_PUBLIC_API_BASE
+      apiBase: 'http://localhost:8000/api',
+    },
+  },
+
+  sitemap: {
+    url: 'https://leseditionsdudjembe.com',
+  },
+
+  image: {
+    domains: ['localhost', 'leseditionsdudjembe.com', 'api.leseditionsdudjembe.com'],
+    // Les covers viennent du backend (fichiers locaux ou URL absolues).
+    provider: 'ipx',
+  },
+
+  nitro: {},
 })
