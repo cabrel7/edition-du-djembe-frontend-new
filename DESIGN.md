@@ -16,6 +16,23 @@ zéro couleur en dur (tokens uniquement), cibles ≥ 44px.
 
 ## 2. Tokens (traduction du système Mielleries)
 
+### Logo — analyse (logo.png : djembe or + carte Afrique verte + livre)
+Couleurs échantillonnées sur le fichier source :
+| Élément logo | Pixel | Token dérivé |
+|---|---|---|
+| Carte de l'Afrique (vert forêt) | `#085828` / `#084828` | `--green: #0A5528` (vert marque) |
+| Corps du djembe (ocre doré) | `#F8A848` / `#E8A848` / `#D88838` | `--gold: #E8A34C` (**accent primaire**) |
+| Reflets djembe (or clair) | `#F8C888` / `#F8D898` | `--gold-300: #F8C888` |
+| Couverture du livre (rouge brûlé) | `#C84828` | `--clay: #C44A2A` (accent secondaire) |
+| Pages du livre (crème chaud) | teinte `#F8D898` | `--paper: #F5EFE2` |
+
+Règles d'usage : l'**or du djembe est l'accent de marque** (CTA, italiques, prix) —
+plus chaud que l'or « prix littéraire » de la v1. Le **vert logo** s'utilise sur les
+fonds clairs (badges, footer, liens) ; les fonds immersifs restent le vert-nuit
+`--ink-900` (assombri du vert logo pour le contraste AA sur texte crème).
+**TODO asset** : variante du logo sur fond sombre (le png actuel a un fond blanc —
+fond transparent + traits clairs à préparer avant le header dark).
+
 ### Palette — encre & papier
 | Token Mielleries | Token Djembé | Valeur | Rôle |
 |---|---|---|---|
@@ -23,11 +40,12 @@ zéro couleur en dur (tokens uniquement), cibles ≥ 44px.
 | honey-900 | `--ink-900` | `#12241A` | sections sombres (hero, vidéo, presse) |
 | honey-800 | `--ink-800` | `#1A3223` | surfaces élevées sur sombre |
 | honey-700 | `--ink-700` | `#274733` | bordures sur sombre, hover |
-| orange | `--gold` | `#D4A437` | accent primaire (CTA, italiques, liens) |
-| orange-600 | `--gold-600` | `#B8922D` | hover CTA |
-| yellow | `--gold-300` | `#E8C96A` | accents sur sombre (équiv. jaune) |
-| — | `--clay` | `#C4562A` | accent secondaire terracotta (badges, catégories) |
-| cream | `--paper` | `#F5EFE2` | sections respiration |
+| orange | `--gold` | `#E8A34C` | accent primaire — or djembe (CTA, italiques, prix) |
+| orange-600 | `--gold-600` | `#C8843A` | hover CTA |
+| yellow | `--gold-300` | `#F8C888` | accents sur sombre (reflets djembe) |
+| — | `--green` | `#0A5528` | vert logo (fonds clairs : badges, footer, liens) |
+| — | `--clay` | `#C44A2A` | accent secondaire — rouge couverture (badges, catégories) |
+| cream | `--paper` | `#F5EFE2` | sections respiration (crème pages) |
 | cream-2 | `--paper-2` | `#EDE4D0` | surfaces sur crème |
 | ivory | `--ivory` | `#FBF7EE` | fond body clair |
 | ink | `--ink` | `#14201A` | texte principal sur clair |
