@@ -146,7 +146,7 @@ useHead({ link: [{ rel: 'canonical', href: canonical.value }] })
 .page-book__specs dd { margin: 0; font-size: 0.95rem; }
 .mono { font-variant-numeric: tabular-nums; }
 .page-book__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
-.page-book__price { font-family: var(--font-display); font-size: 1.5rem; color: var(--gold); font-weight: 600; }
+.page-book__price { font-size: 1.5rem; color: var(--gold); font-weight: 600; }
 .page-book__longform { display: grid; gap: 1rem; padding-block: 0.5rem; }
 .prose { white-space: pre-line; line-height: 1.7; color: var(--ink-800, #24382c); max-width: 65ch; }
 

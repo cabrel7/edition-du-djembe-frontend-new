@@ -50,9 +50,9 @@ watch(open, (v) => {
 <template>
   <header class="hdr" :class="{ 'is-scrolled': scrolled, 'is-hidden': hidden, 'is-open': open }">
     <div class="hdr__bar container">
-      <NuxtLink to="/" class="hdr__logo" aria-label="Les Éditions du Djembé — accueil">
+      <NuxtLink to="/" class="hdr__logo" aria-label="Les Éditions du Djembé d’Ébène — accueil">
         <img src="/logo.png" alt="" width="40" height="40">
-        <span class="hdr__word">Les Éditions<br>du <em>Djembé</em></span>
+        <span class="hdr__word">Les Éditions<br>du Djembé d’<em>Ébène</em></span>
       </NuxtLink>
 
       <nav class="hdr__nav" aria-label="Navigation principale">
@@ -64,7 +64,8 @@ watch(open, (v) => {
 
       <div class="hdr__actions">
         <NuxtLink to="/soumettre-mon-travail" class="btn btn-primary hdr__cta">
-          <span>Soumettre un manuscrit</span>
+          <span class="hdr__cta-short">Soumettre</span>
+          <span class="hdr__cta-full">Soumettre un manuscrit</span>
         </NuxtLink>
         <button
           class="hdr__burger" :aria-expanded="open" aria-controls="mobile-menu"
@@ -136,7 +137,7 @@ watch(open, (v) => {
 
 .hdr__logo { display: flex; align-items: center; gap: 0.6rem; color: inherit; }
 .hdr__logo img { width: 38px; height: 38px; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.18)); }
-.hdr__word { font-family: var(--font-display); font-size: 0.95rem; letter-spacing: -0.01em; line-height: 1.15; white-space: nowrap; }
+.hdr__word { font-size: 0.95rem; letter-spacing: -0.01em; line-height: 1.15; white-space: nowrap; }
 .hdr__word em { font-style: normal; color: var(--gold); }
 
 .hdr__nav { display: none; gap: 0.25rem; }
@@ -165,8 +166,9 @@ watch(open, (v) => {
 }
 
 .hdr__actions { display: flex; align-items: center; gap: 0.5rem; }
-.hdr__cta { min-height: 44px; padding: 0.6rem 1.1rem; font-size: 0.85rem; }
-.hdr__cta span { display: none; }
+.hdr__cta { min-height: 44px; padding: 0.6rem 1rem; font-size: 0.85rem; }
+.hdr__cta-short { display: inline; }
+.hdr__cta-full { display: none; }
 
 .hdr__burger {
   position: relative;
@@ -230,13 +232,15 @@ watch(open, (v) => {
 .mm__link:hover, .mm__link.router-link-active { color: var(--gold); }
 .mm__num { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; color: var(--gold); }
 .mm__body { display: grid; gap: 0.2rem; }
-.mm__label { font-family: var(--font-display); font-size: clamp(1.3rem, 5vw, 1.7rem); line-height: 1.15; }
+.mm__label { font-size: clamp(1.3rem, 5vw, 1.7rem); line-height: 1.15; }
 .mm__desc { font-size: 0.8rem; color: rgba(245, 239, 226, 0.5); }
 .mm__foot { display: grid; gap: 1rem; justify-items: stretch; }
 .btn-block { justify-content: center; }
 
 @media (min-width: 640px) {
-  .hdr__cta span { display: inline; }
+  .hdr__cta-short { display: none; }
+  .hdr__cta-full { display: inline; }
+  .hdr__cta { padding: 0.6rem 1.1rem; }
   .hdr__word { font-size: 1.05rem; }
 }
 @media (min-width: 1100px) {

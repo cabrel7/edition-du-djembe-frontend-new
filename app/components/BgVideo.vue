@@ -4,14 +4,12 @@
  * - fond CSS du conteneur visible dès le départ (pas de flash blanc) ;
  * - la vidéo apparaît en fondu dès qu'elle joue réellement ;
  * - une seule source, chargée en différé (idle ou IntersectionObserver) ;
- * - image fixe seule si « économie de données », 2G, animations réduites,
- *   ou (desktopOnly) sur mobile.
+ * - image fixe seule si « économie de données », 2G ou animations réduites.
  */
 const props = withDefaults(defineProps<{
   poster?: string
   mp4: string
   eager?: boolean
-  desktopOnly?: boolean
   rate?: number
 }>(), { rate: 1 })
 
@@ -24,8 +22,7 @@ onMounted(() => {
   const nav = navigator as Navigator & { connection?: { saveData?: boolean, effectiveType?: string } }
   const saveData = nav.connection?.saveData || /(^|-)2g$/.test(nav.connection?.effectiveType || '')
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  const mobile = window.matchMedia('(max-width: 767px)').matches
-  if (saveData || reduced || (props.desktopOnly && mobile)) return
+  if (saveData || reduced) return
 
   const reveal = () => { playing.value = true }
   v.addEventListener('playing', reveal, { once: true })

@@ -6,8 +6,6 @@ export default defineNuxtConfig({
   modules: ['@nuxt/image', '@nuxtjs/sitemap', '@vueuse/nuxt'],
 
   css: [
-    '@fontsource-variable/fraunces/index.css',
-    '@fontsource-variable/fraunces/wght-italic.css',
     '@fontsource-variable/inter/index.css',
     '~/assets/css/main.css',
   ],
@@ -17,7 +15,7 @@ export default defineNuxtConfig({
       htmlAttrs: { lang: 'fr' },
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
-        { name: 'theme-color', content: '#0C1A12' },
+        { name: 'theme-color', content: '#fdfaf4' },
         { name: 'format-detection', content: 'telephone=no' },
       ],
     },

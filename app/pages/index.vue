@@ -28,6 +28,7 @@ function markThumbBroken(id: number) {
 }
 
 const featuredCover = computed(() => coverUrl('book', featuredBook.value?.cover))
+const featuredCoverBroken = ref(false)
 const featuredPrice = computed(() => {
   const p = featuredBook.value?.price
   return p != null && Number(p) > 0 ? `${Number(p).toFixed(2)} €` : null
@@ -53,11 +54,11 @@ function domainLabel(m: Memoir): string {
 }
 
 useHead({
-  title: 'Les Éditions du Djembé — Faire résonner l’invisible',
+  title: 'Les Éditions du Djembé d’Ébène — Faire résonner l’invisible',
   meta: [
     {
       name: 'description',
-      content: 'Maison d’édition indépendante : romans, essais, mémoires de recherche, Cahiers du Djembé et vidéos culturelles.',
+      content: 'Maison d’édition indépendante à Québec : romans, essais, mémoires de recherche, Cahiers du Djembé et vidéos culturelles.',
     },
   ],
 })
@@ -68,20 +69,19 @@ useHead({
     <!-- ============ HERO ============ -->
     <section class="hero">
       <div class="hero__media" aria-hidden="true">
-        <BgVideo eager desktop-only mp4="/hero-video.mp4" />
+        <BgVideo eager mp4="/hero-video.mp4" />
       </div>
-      <div class="hero__shade" aria-hidden="true" />
+      <div class="hero__scrim" aria-hidden="true" />
       <div class="hero__glow" aria-hidden="true" />
       <div class="hero__layout container">
         <div class="hero__content">
-          <p class="eyebrow hero__fade">Maison d’édition indépendante</p>
           <h1 class="hero__title">
             <span class="hero__line"><span>Faire résonner</span></span>
             <span class="hero__line"><span class="accent">l’invisible</span></span>
           </h1>
           <p class="lead hero__fade hero__lead">
-            Nous accompagnons les auteurs dans la publication et la diffusion
-            de leurs œuvres — romans, essais, mémoires et cahiers de recherche.
+            Votre partenaire de confiance pour la publication et la diffusion
+            de vos œuvres littéraires et travaux de recherche.
           </p>
           <div class="hero__ctas hero__fade">
             <NuxtLink to="/catalogue" class="btn btn-primary">
@@ -101,9 +101,18 @@ useHead({
           <span class="hero-plate__tag">À la une</span>
           <div class="hero-plate__cover">
             <img
-              v-if="featuredCover" :src="featuredCover" :alt="`Couverture — ${featuredBook.title}`"
+              v-if="featuredCover && !featuredCoverBroken" :src="featuredCover" :alt="`Couverture — ${featuredBook.title}`"
               width="400" height="600"
+              @error="featuredCoverBroken = true"
             >
+            <div v-else class="book__placeholder" aria-hidden="true">
+              <svg viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="8" y="4" width="64" height="112" rx="3" fill="currentColor" opacity="0.12"/>
+                <rect x="8" y="4" width="6" height="112" rx="1" fill="currentColor" opacity="0.2"/>
+                <line x1="20" y1="28" x2="56" y2="28" stroke="currentColor" stroke-width="1.5" opacity="0.25"/>
+                <circle cx="40" cy="68" r="12" stroke="currentColor" stroke-width="1.2" opacity="0.2"/>
+              </svg>
+            </div>
           </div>
           <div class="hero-plate__meta">
             <h2 class="hero-plate__title">{{ featuredBook.title }}</h2>
@@ -113,9 +122,6 @@ useHead({
             </p>
           </div>
         </NuxtLink>
-      </div>
-      <div class="hero__scroll hero__fade" aria-hidden="true">
-        <span>Défiler</span><i />
       </div>
     </section>
 
@@ -134,7 +140,7 @@ useHead({
     <section class="section">
       <div class="container">
         <div class="section-head reveal">
-          <p class="eyebrow">§ 01 — Nouvelles publications</p>
+          <p class="eyebrow">Nouvelles publications</p>
           <h2 class="h2">Des voix qui <em class="accent">traversent</em></h2>
           <p class="lead">Les derniers titres du catalogue — romans, essais et recherches.</p>
         </div>
@@ -169,10 +175,10 @@ useHead({
     </section>
 
     <!-- ============ COLLECTIONS — index ============ -->
-    <section class="section section-paper">
+    <section class="section section-warm">
       <div class="container">
         <div class="section-head reveal">
-          <p class="eyebrow">§ 02 — Nos collections</p>
+          <p class="eyebrow">Nos collections</p>
           <h2 class="h2">Un catalogue <em class="accent">pluriel</em></h2>
           <p class="lead">De la fiction au document de recherche, chaque collection a son rythme et sa exigence.</p>
         </div>
@@ -194,64 +200,79 @@ useHead({
 
     <!-- ============ CAHIERS DU DJEMBÉ ============ -->
     <section class="section section-dark">
-      <div class="container cahiers">
-        <div class="cahiers__intro reveal">
-          <p class="eyebrow">§ 03 — Les Cahiers du Djembé</p>
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Les Cahiers du Djembé</p>
           <h2 class="h2">La revue de presse et d’idées</h2>
           <p class="lead">Entretiens, critiques et reportages — le regard de la maison sur les scènes culturelles.</p>
-          <NuxtLink to="/cahiers-du-djembe" class="link-arrow cahiers__all">
-            Tous les cahiers <AppIcon name="arrow-right" :size="16" />
+        </div>
+
+        <div v-if="pressStatus === 'pending'" class="cahiers-grid" aria-busy="true">
+          <div v-for="i in 3" :key="i" class="skeleton" style="aspect-ratio:4/3;border-radius:var(--radius)" />
+        </div>
+
+        <div v-else-if="pressReviews.length" class="cahiers-grid">
+          <NuxtLink
+            v-for="(pr, i) in pressReviews" :key="pr.id"
+            :to="`/cahiers-du-djembe/${pr.slug}`" class="cahier-card reveal" :style="{ '--d': `${i * 80}ms` }"
+          >
+            <div class="cahier-card__media">
+              <img
+                v-if="pr.cover_image && !brokenThumbs.has(pr.id)" :src="pr.cover_image" :alt="pr.title"
+                loading="lazy" width="640" height="480"
+                @error="markThumbBroken(pr.id)"
+              >
+              <div v-else class="cahier-card__fallback" aria-hidden="true">
+                <AppIcon name="newspaper" :size="40" />
+              </div>
+            </div>
+            <div class="cahier-card__body">
+              <span class="chip chip--line">{{ pr.category }}</span>
+              <h3 class="cahier-card__title">{{ pr.title }}</h3>
+              <p v-if="pr.summary" class="cahier-card__summary">{{ pr.summary }}</p>
+            </div>
           </NuxtLink>
         </div>
 
-        <div class="cahiers__body">
-          <div v-if="pressStatus === 'pending'" class="press-rows" aria-busy="true">
-            <div v-for="i in 3" :key="i" class="skeleton" style="height:4.5rem;border-radius:var(--radius)" />
-          </div>
+        <div v-else class="issue-teaser reveal">
+          <span class="issue-teaser__num" aria-hidden="true">N°&nbsp;01</span>
+          <p>Le prochain numéro se prépare — entretiens, critiques et reportages à paraître.</p>
+        </div>
 
-          <ul v-else-if="pressReviews.length" class="press-rows reveal">
-            <li v-for="pr in pressReviews" :key="pr.id" class="press-rows__item">
-              <NuxtLink :to="`/cahiers-du-djembe/${pr.slug}`" class="press-rows__link">
-                <span class="chip">{{ pr.category }}</span>
-                <h3 class="press-rows__title">{{ pr.title }}</h3>
-                <p v-if="pr.summary" class="press-rows__summary">{{ pr.summary }}</p>
-              </NuxtLink>
-            </li>
-          </ul>
-
-          <div v-else class="issue-teaser reveal">
-            <span class="issue-teaser__num" aria-hidden="true">N°&nbsp;01</span>
-            <p>Le prochain numéro se prépare — entretiens, critiques et reportages à paraître.</p>
-          </div>
+        <div class="section-foot reveal">
+          <NuxtLink to="/cahiers-du-djembe" class="link-arrow">Tous les cahiers <AppIcon name="arrow-right" :size="16" /></NuxtLink>
         </div>
       </div>
     </section>
 
-    <!-- ============ MÉMOIRES — bibliographie ============ -->
-    <section class="section">
+    <!-- ============ MÉMOIRES ============ -->
+    <section class="section section-paper">
       <div class="container">
         <div class="section-head reveal">
-          <p class="eyebrow">§ 04 — Mémoires de recherche</p>
+          <p class="eyebrow">Mémoires de recherche</p>
           <h2 class="h2">Le savoir <em class="accent">en partage</em></h2>
           <p class="lead">Mémoires et thèses issus des universités partenaires — consultation et téléchargement.</p>
         </div>
 
-        <ul v-if="memoirs.length" class="biblio reveal">
-          <li v-for="(m, i) in memoirs" :key="m.id" class="biblio__item">
-            <NuxtLink :to="`/memoires/${m.slug || m.id}`" class="biblio__link">
-              <span class="biblio__num">{{ String(i + 1).padStart(2, '0') }}</span>
-              <span class="biblio__body">
-                <h3 class="biblio__title">{{ m.title }}</h3>
-                <p class="biblio__meta">
-                  {{ m.author }}
-                  <template v-if="m.university"> · {{ m.university }}</template>
-                  <template v-if="m.year"> · {{ m.year }}</template>
-                </p>
-              </span>
+        <div v-if="memoirs.length" class="memoirs-grid">
+          <NuxtLink
+            v-for="(m, i) in memoirs" :key="m.id"
+            :to="`/memoires/${m.slug || m.id}`" class="memoir-card reveal" :style="{ '--d': `${i * 80}ms` }"
+          >
+            <div class="memoir-card__top">
+              <span class="memoir-card__num">{{ String(i + 1).padStart(2, '0') }}</span>
               <span class="chip chip--line">{{ domainLabel(m) }}</span>
-            </NuxtLink>
-          </li>
-        </ul>
+            </div>
+            <div class="memoir-card__body">
+              <h3 class="memoir-card__title">{{ m.title }}</h3>
+              <p class="memoir-card__author">{{ m.author }}</p>
+            </div>
+            <div class="memoir-card__foot">
+              <span v-if="m.university" class="memoir-card__uni">{{ m.university }}</span>
+              <span v-if="m.year" class="memoir-card__year">{{ m.year }}</span>
+            </div>
+          </NuxtLink>
+        </div>
         <div v-else class="state-box">
           <p>Aucun mémoire publié pour l’instant.</p>
         </div>
@@ -263,10 +284,10 @@ useHead({
     </section>
 
     <!-- ============ VIDÉOS ============ -->
-    <section class="section section-dark">
+    <section class="section">
       <div class="container">
         <div class="section-head reveal">
-          <p class="eyebrow">§ 05 — Vidéos</p>
+          <p class="eyebrow">Vidéos</p>
           <h2 class="h2">La culture en <em class="accent">mouvement</em></h2>
           <p class="lead">Entretiens, lectures et documentaires — les voix de la maison à l’image.</p>
         </div>
@@ -321,32 +342,30 @@ useHead({
 </template>
 
 <style scoped>
-/* ---------- Hero : composition asymétrique ---------- */
+/* ---------- Hero ---------- */
 .hero {
   position: relative;
-  min-height: 100svh;
+  min-height: 92svh;
   display: flex;
-  align-items: flex-end;
-  padding-block: calc(var(--header-h) + 3rem) 5rem;
-  background: var(--ink-950);
+  align-items: center;
+  padding-block: calc(var(--header-h) + 2rem) 4rem;
+  background: var(--ink-900);
   color: var(--paper);
   overflow: hidden;
 }
 .hero__media { position: absolute; inset: 0; }
-.hero__shade {
+.hero__scrim {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(180deg, rgba(12, 26, 18, 0.55) 0%, rgba(12, 26, 18, 0.25) 40%, rgba(12, 26, 18, 0.88) 100%),
-    linear-gradient(90deg, rgba(12, 26, 18, 0.7) 0%, transparent 55%);
+  background: linear-gradient(180deg, rgba(26, 31, 27, 0.45) 0%, rgba(26, 31, 27, 0.25) 50%, rgba(26, 31, 27, 0.55) 100%);
 }
 .hero__glow {
   position: absolute;
   inset: -20% -10% auto;
   height: 90%;
   background:
-    radial-gradient(55% 60% at 70% 20%, rgba(232, 163, 76, 0.22), transparent 70%),
-    radial-gradient(40% 50% at 20% 60%, rgba(10, 85, 40, 0.35), transparent 70%);
+    radial-gradient(55% 60% at 70% 20%, rgba(232, 163, 76, 0.15), transparent 70%),
+    radial-gradient(40% 50% at 20% 60%, rgba(45, 106, 79, 0.2), transparent 70%);
   pointer-events: none;
 }
 .hero__layout {
@@ -354,30 +373,16 @@ useHead({
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(240px, 0.55fr);
   gap: clamp(2rem, 6vw, 5rem);
-  align-items: end;
+  align-items: center;
 }
 .hero__content { display: grid; gap: 1.4rem; }
-.hero__title { font-size: var(--step-5); }
+.hero__title { font-size: var(--step-5); color: #fff; }
 .hero__line { display: block; overflow: hidden; }
 .hero__line > span { display: inline-block; animation: heroUp 1.1s var(--ease) both; }
 .hero__line:nth-child(2) > span { animation-delay: 0.12s; }
-.hero__lead { max-width: 52ch; }
+.hero__lead { max-width: 52ch; color: rgba(255, 255, 255, 0.88); }
 .hero__ctas { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 0.6rem; }
 .hero__fade { animation: fadeUp 1s var(--ease) 0.4s both; }
-.hero__scroll {
-  position: absolute;
-  right: var(--gutter);
-  bottom: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.72rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(245, 239, 226, 0.55);
-}
-.hero__scroll i { display: block; width: 1px; height: 44px; background: linear-gradient(var(--gold), transparent); }
 
 /* Plaque « à la une » */
 .hero-plate {
@@ -386,9 +391,9 @@ useHead({
   gap: 0.9rem;
   justify-items: start;
   padding: 1.4rem;
-  border: 1px solid rgba(232, 163, 76, 0.35);
+  border: 1px solid rgba(232, 163, 76, 0.3);
   border-radius: var(--radius);
-  background: rgba(12, 26, 18, 0.55);
+  background: rgba(26, 31, 27, 0.6);
   backdrop-filter: blur(6px);
   color: var(--paper);
   transition: border-color 0.25s, transform 0.35s var(--ease);
@@ -397,7 +402,7 @@ useHead({
 .hero-plate__tag {
   font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--gold);
 }
@@ -410,8 +415,10 @@ useHead({
   box-shadow: var(--shadow-lg);
 }
 .hero-plate__cover img { width: 100%; height: 100%; object-fit: cover; }
-.hero-plate__title { font-family: var(--font-display); font-size: 1.15rem; line-height: 1.25; }
-.hero-plate__author { font-size: 0.85rem; color: rgba(245, 239, 226, 0.65); }
+.hero-plate__cover .book__placeholder { background: linear-gradient(145deg, var(--ink-800), var(--ink-700)); color: var(--paper); }
+.hero-plate__cover .book__placeholder svg { opacity: 0.25; }
+.hero-plate__title { font-weight: 600; font-size: 1.1rem; line-height: 1.3; }
+.hero-plate__author { font-size: 0.85rem; color: rgba(247, 243, 235, 0.6); }
 
 @media (max-width: 900px) {
   .hero__layout { grid-template-columns: 1fr; }
@@ -430,23 +437,36 @@ useHead({
   color: inherit;
   transition: background 0.2s, padding-left 0.25s var(--ease);
 }
-.index-list__link:hover { background: rgba(20, 32, 26, 0.04); padding-left: 0.9rem; }
+.index-list__link:hover { background: rgba(30, 36, 32, 0.04); padding-left: 0.9rem; }
 .index-list__link:hover .index-list__arrow { transform: translateX(4px); color: var(--gold); }
-.index-list__num { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em; color: var(--gold); }
-.index-list__name { font-family: var(--font-display); font-size: clamp(1.25rem, 2.6vw, 1.7rem); }
+.index-list__num { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; color: var(--gold-600); }
+.index-list__name { font-weight: 600; font-size: clamp(1.15rem, 2.4vw, 1.5rem); }
 .index-list__arrow { color: var(--muted); transition: transform 0.25s var(--ease), color 0.2s; align-self: center; }
 
-/* ---------- Cahiers : grille revue ---------- */
-.cahiers { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr); gap: clamp(2rem, 5vw, 4.5rem); align-items: start; }
-.cahiers__intro { display: grid; gap: 1.1rem; justify-items: start; position: sticky; top: calc(var(--header-h) + 2rem); }
-.cahiers__all { margin-top: 0.75rem; }
-.press-rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-light); }
-.press-rows__item { border-bottom: 1px solid var(--line-light); }
-.press-rows__link { display: grid; gap: 0.5rem; padding: 1.35rem 0.35rem; color: inherit; transition: background 0.2s, padding-left 0.25s var(--ease); }
-.press-rows__link:hover { background: rgba(245, 239, 226, 0.04); padding-left: 0.9rem; }
-.press-rows__link:hover .press-rows__title { color: var(--gold); }
-.press-rows__title { font-family: var(--font-display); font-size: 1.25rem; line-height: 1.3; transition: color 0.2s; }
-.press-rows__summary { font-size: 0.92rem; color: rgba(245, 239, 226, 0.6); max-width: 60ch; }
+/* ---------- Cahiers : cartes ---------- */
+.cahiers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.2rem, 2vw, 1.8rem); }
+.cahier-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.2rem;
+  border-radius: var(--radius);
+  background: rgba(247, 243, 235, 0.06);
+  border: 1px solid rgba(247, 243, 235, 0.08);
+  color: var(--paper);
+  transition: background 0.25s, border-color 0.25s, transform 0.3s var(--ease);
+}
+.cahier-card:hover { background: rgba(247, 243, 235, 0.1); border-color: rgba(232, 163, 76, 0.3); transform: translateY(-3px); }
+.cahier-card__media {
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--ink-800);
+}
+.cahier-card__media img { width: 100%; height: 100%; object-fit: cover; }
+.cahier-card__fallback { display: grid; place-items: center; width: 100%; height: 100%; background: linear-gradient(135deg, var(--ink-800), var(--ink-700)); color: rgba(247, 243, 235, 0.25); }
+.cahier-card__body { display: grid; gap: 0.6rem; }
+.cahier-card__title { font-weight: 600; font-size: 1.1rem; line-height: 1.3; }
+.cahier-card__summary { font-size: 0.88rem; color: rgba(247, 243, 235, 0.6); line-height: 1.5; }
 
 .issue-teaser {
   display: flex;
@@ -455,42 +475,49 @@ useHead({
   padding: 2rem 1.5rem;
   border: 1px dashed rgba(232, 163, 76, 0.4);
   border-radius: var(--radius);
-  color: rgba(245, 239, 226, 0.75);
+  color: rgba(247, 243, 235, 0.7);
 }
 .issue-teaser__num {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 2.2rem;
+  font-weight: 700;
+  font-size: 2rem;
   color: var(--gold);
   white-space: nowrap;
 }
 
 @media (max-width: 900px) {
-  .cahiers { grid-template-columns: 1fr; }
-  .cahiers__intro { position: static; }
+  .cahiers-grid { grid-template-columns: repeat(2, 1fr); }
 }
-
-/* ---------- Mémoires : bibliographie ---------- */
-.biblio { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.biblio__item { border-bottom: 1px solid var(--line); }
-.biblio__link {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 1.25rem;
-  align-items: baseline;
-  padding: 1.2rem 0.35rem;
-  color: inherit;
-  transition: background 0.2s, padding-left 0.25s var(--ease);
-}
-.biblio__link:hover { background: rgba(20, 32, 26, 0.04); padding-left: 0.9rem; }
-.biblio__link:hover .biblio__title { color: var(--gold); }
-.biblio__num { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em; color: var(--gold); }
-.biblio__title { font-family: var(--font-display); font-size: 1.15rem; line-height: 1.3; transition: color 0.2s; }
-.biblio__meta { font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem; }
-
 @media (max-width: 540px) {
-  .biblio__link { grid-template-columns: auto 1fr; }
-  .biblio__link .chip { display: none; }
+  .cahiers-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- Mémoires : cartes colonnes ---------- */
+.memoirs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(1rem, 1.5vw, 1.4rem); }
+.memoir-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.4rem 1.3rem;
+  border-radius: var(--radius);
+  background: var(--ivory);
+  border: 1px solid var(--line);
+  color: inherit;
+  transition: border-color 0.2s, box-shadow 0.25s, transform 0.25s var(--ease);
+}
+.memoir-card:hover { border-color: var(--gold-600); box-shadow: var(--shadow); transform: translateY(-4px); }
+.memoir-card__top { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.memoir-card__num { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; color: var(--gold-600); }
+.memoir-card__body { display: grid; gap: 0.4rem; }
+.memoir-card__title { font-weight: 600; font-size: 1rem; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.memoir-card__author { font-size: 0.85rem; color: var(--muted); }
+.memoir-card__foot { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: var(--muted); padding-top: 0.75rem; border-top: 1px solid var(--line); }
+.memoir-card__uni { color: var(--green); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.memoir-card__year { color: var(--gold-600); font-weight: 600; }
+
+@media (max-width: 900px) {
+  .memoirs-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 540px) {
+  .memoirs-grid { grid-template-columns: 1fr; }
 }
 
 /* ---------- Manifeste ---------- */

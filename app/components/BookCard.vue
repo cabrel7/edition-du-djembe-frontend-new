@@ -17,7 +17,17 @@ const coverBroken = ref(false)
         style="width:100%;height:100%;object-fit:cover"
         @error="coverBroken = true"
       >
-      <div v-else class="skeleton" style="width:100%;height:100%;border-radius:0" aria-hidden="true" />
+      <div v-else class="book__placeholder" aria-hidden="true">
+        <svg viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="4" width="64" height="112" rx="3" ry="3" fill="currentColor" opacity="0.12"/>
+          <rect x="8" y="4" width="6" height="112" rx="1" fill="currentColor" opacity="0.2"/>
+          <line x1="20" y1="28" x2="56" y2="28" stroke="currentColor" stroke-width="1.5" opacity="0.25"/>
+          <line x1="20" y1="36" x2="48" y2="36" stroke="currentColor" stroke-width="1" opacity="0.18"/>
+          <circle cx="40" cy="68" r="12" stroke="currentColor" stroke-width="1.2" opacity="0.2"/>
+          <path d="M34 68 L40 62 L46 68 L40 74 Z" fill="currentColor" opacity="0.15"/>
+          <line x1="20" y1="96" x2="44" y2="96" stroke="currentColor" stroke-width="1" opacity="0.15"/>
+        </svg>
+      </div>
     </div>
     <h3 class="book__title">{{ book.title }}</h3>
     <div class="book__meta">
