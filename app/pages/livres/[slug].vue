@@ -32,7 +32,8 @@ if (error.value) {
   throw createError({ statusCode: 404, statusMessage: 'Livre introuvable', fatal: true })
 }
 
-const cover = computed(() => coverUrl('book', book.value?.cover))
+// Résolu dans le setup (pas dans un getter unhead : NUXT_E1001 hors contexte).
+const cover = coverUrl('book', book.value?.cover, config.public.apiBase)
 const coverBroken = ref(false)
 const price = computed(() => {
   const p = book.value?.price
@@ -49,7 +50,7 @@ useSeoMeta({
   description: () => book.value?.description?.slice(0, 160) ?? 'Livre publié aux Éditions du Djembé.',
   ogTitle: () => book.value?.title,
   ogDescription: () => book.value?.description?.slice(0, 160) ?? undefined,
-  ogImage: () => cover.value ?? undefined,
+  ogImage: cover ?? undefined,
 })
 useHead({ link: [{ rel: 'canonical', href: canonical.value }] })
 </script>

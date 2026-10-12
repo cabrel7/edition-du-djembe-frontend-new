@@ -5,14 +5,19 @@ const navigation = [
   { to: '/', label: 'Accueil' },
   { to: '/a-propos', label: 'À propos' },
   { to: '/catalogue', label: 'Catalogue' },
-  { to: '/recherche', label: 'Recherche' },
+  { to: '/memoires', label: 'Mémoires' },
+  { to: '/actualites', label: 'Actualités' },
+  { to: '/videos', label: 'Vidéos' },
   { to: '/cahiers-du-djembe', label: 'Les Cahiers du Djembé' },
+  { to: '/recherche', label: 'Recherche' },
+  { to: '/soumettre-mon-travail', label: 'Soumettre un manuscrit' },
+  { to: '/contact', label: 'Contact' },
 ]
 const services = [
-  { to: '/services#publication', label: 'Publication' },
+  { to: '/services#edition', label: 'Publication' },
   { to: '/services#correction', label: 'Correction' },
   { to: '/services#impression', label: 'Impression' },
-  { to: '/services#formations', label: 'Formations' },
+  { to: '/services#universitaire', label: 'Édition universitaire' },
   { to: '/services#traduction', label: 'Traduction' },
 ]
 </script>
