@@ -19,7 +19,8 @@ export default defineNuxtConfig({
         { name: 'format-detection', content: 'telephone=no' },
       ],
     },
-    pageTransition: { name: 'page', mode: 'out-in' },
+    // Pas de pageTransition : en mode out-in, main reste en opacity:0 tant que
+    // les frames CSS ne progressent pas → pages invisibles après navigation client.
   },
 
   runtimeConfig: {

@@ -221,11 +221,6 @@ html.capture .reveal, html.capture .reveal-img, html.capture .book { opacity: 1 
 html.capture .hero { min-height: 560px !important; }
 html.capture-deep main { transform: translateY(calc(-1 * var(--capture-off, 2400px))); }
 
-/* ---------- Page transition ---------- */
-.page-enter-active, .page-leave-active { transition: opacity 0.35s var(--ease), transform 0.35s var(--ease); }
-.page-enter-from { opacity: 0; transform: translateY(12px); }
-.page-leave-to { opacity: 0; }
-
 /* ---------- Marquee ---------- */
 .mq { overflow: hidden; border-block: 1px solid var(--line); background: var(--paper-2); color: var(--ink-2); }
 .mq__track { display: flex; width: max-content; animation: mq 40s linear infinite; }
