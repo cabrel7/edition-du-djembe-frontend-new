@@ -44,7 +44,7 @@ function fmtDate(d: string | null) {
   return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
-useHead({ title: 'Les Cahiers du Djembé — Les Éditions du Djembé d’Ébène' })
+useHead({ title: 'Les Cahiers du Djembé' })
 </script>
 
 <template>
@@ -90,10 +90,12 @@ useHead({ title: 'Les Cahiers du Djembé — Les Éditions du Djembé d’Ébèn
             :to="`/cahiers-du-djembe/${r.slug}`" class="cahier-card"
           >
             <div class="cahier-card__media">
-              <img
-                v-if="r.cover_image && pressCover(r.cover_image) && !broken.has(r.id)" :src="pressCover(r.cover_image)" :alt="r.title"
-                loading="lazy" decoding="async" width="640" height="480" @error="broken.add(r.id)"
-              >
+              <NuxtImg
+                v-if="r.cover_image && pressCover(r.cover_image) && !broken.has(r.id)"
+                :src="pressCover(r.cover_image) ?? undefined" :alt="r.title"
+                preset="cover" width="640" height="480" :sizes="GRID3_SIZES"
+                loading="lazy" decoding="async" @error="broken.add(r.id)"
+              />
               <div v-else class="cahier-card__fallback" aria-hidden="true">
                 <AppIcon name="newspaper" :size="40" />
               </div>
@@ -112,7 +114,7 @@ useHead({ title: 'Les Cahiers du Djembé — Les Éditions du Djembé d’Ébèn
 
 <style scoped>
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
-.toolbar__input { flex: 1; min-width: 220px; min-height: 48px; padding: 0.7rem 1.2rem; border: 1px solid var(--line); border-radius: 999px; background: var(--ivory); font: inherit; font-size: 0.95rem; }
+.toolbar__input { flex: 1; min-width: 220px; min-height: 48px; padding: 0.7rem 1.2rem; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); font: inherit; font-size: 0.95rem; }
 .toolbar__input--dark { background: color-mix(in srgb, var(--paper) 8%, transparent); border-color: var(--line-light); color: var(--paper); }
 .toolbar__input--dark::placeholder { color: var(--on-dark-3); }
 .toolbar__input:focus { outline: 2px solid var(--focus-ring); outline-offset: 2px; border-color: transparent; }

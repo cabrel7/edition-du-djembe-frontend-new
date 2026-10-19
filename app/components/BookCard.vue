@@ -12,11 +12,13 @@ const coverBroken = ref(false)
 <template>
   <NuxtLink :to="`/livres/${book.slug || book.id}`" class="book">
     <div class="book__cover">
-      <img
-        v-if="cover && !coverBroken" :src="cover" :alt="`Couverture — ${book.title}`" loading="lazy" decoding="async" width="400" height="600"
+      <NuxtImg
+        v-if="cover && !coverBroken" :src="cover" :alt="`Couverture — ${book.title}`"
+        preset="cover" width="400" height="600" :sizes="BOOK_SIZES"
+        loading="lazy" decoding="async"
         style="width:100%;height:100%;object-fit:cover"
         @error="coverBroken = true"
-      >
+      />
       <div v-else class="book__placeholder" aria-hidden="true">
         <svg viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="8" y="4" width="64" height="112" rx="3" ry="3" fill="currentColor" opacity="0.12"/>

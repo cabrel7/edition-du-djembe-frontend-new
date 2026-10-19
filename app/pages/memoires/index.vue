@@ -50,7 +50,7 @@ function domainLabel(m: Memoir): string {
   return d[String(m.domain).toLowerCase()] ?? (m.domain ? String(m.domain) : 'Recherche')
 }
 
-useHead({ title: 'Mémoires & thèses — Les Éditions du Djembé d’Ébène' })
+useHead({ title: 'Mémoires & thèses' })
 </script>
 
 <template>
@@ -98,10 +98,11 @@ useHead({ title: 'Mémoires & thèses — Les Éditions du Djembé d’Ébène' 
                 v-if="memoirCover(m) && !brokenCovers.has(m.id)"
                 class="memoir-card__cover"
               >
-                <img
-                  :src="memoirCover(m) || undefined" :alt="`Couverture — ${m.title}`"
-                  width="480" height="300" loading="lazy" decoding="async" @error="markCoverBroken(m.id)"
-                >
+                <NuxtImg
+                  :src="memoirCover(m) ?? undefined" :alt="`Couverture — ${m.title}`"
+                  preset="cover" width="480" :sizes="GRID3_SIZES"
+                  loading="lazy" decoding="async" @error="markCoverBroken(m.id)"
+                />
               </div>
               <div class="memoir-card__top">
                 <span class="memoir-card__num">{{ String(i + 1).padStart(2, '0') }}</span>

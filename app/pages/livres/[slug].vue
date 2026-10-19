@@ -46,15 +46,35 @@ const year = computed(() =>
 )
 
 const canonical = computed(() => `/livres/${book.value?.slug || slug.value}`)
+const siteUrl = config.public.siteUrl
 
 useSeoMeta({
-  title: () => `${book.value?.title ?? 'Livre'} — Les Éditions du Djembé`,
+  title: () => book.value?.title ?? 'Livre',
   description: () => book.value?.description?.slice(0, 160) ?? 'Livre publié aux Éditions du Djembé.',
   ogTitle: () => book.value?.title,
   ogDescription: () => book.value?.description?.slice(0, 160) ?? undefined,
   ogImage: cover ?? undefined,
 })
-useHead({ link: [{ rel: 'canonical', href: canonical.value }] })
+useHead({ link: [{ rel: 'canonical', href: computed(() => `${siteUrl}${canonical.value}`) }] })
+
+useJsonLd('ld-book', computed(() => {
+  const b = book.value
+  if (!b) return {}
+  const date = isoDate(b.published_date)
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Book',
+    name: b.title,
+    author: b.author,
+    url: `${siteUrl}${canonical.value}`,
+    ...(cover ? { image: cover } : {}),
+    ...(b.isbn ? { isbn: b.isbn } : {}),
+    ...(b.pages ? { numberOfPages: b.pages } : {}),
+    ...(b.language ? { inLanguage: b.language } : {}),
+    ...(b.publisher ? { publisher: b.publisher } : {}),
+    ...(date ? { datePublished: date } : {}),
+  }
+}))
 </script>
 
 <template>

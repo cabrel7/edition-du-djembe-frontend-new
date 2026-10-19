@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ hero: 'light' })
 
-useHead({ title: 'Contact — Les Éditions du Djembé d’Ébène' })
+useHead({ title: 'Contact' })
 
 const contact = {
   street: '12263 boulevard Saint Claude',

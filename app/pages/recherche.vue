@@ -58,7 +58,7 @@ watch(q, (val) => {
   navigateTo({ path: '/recherche', query }, { replace: true, immediate: false })
 })
 
-useHead({ title: 'Recherche — Les Éditions du Djembé d’Ébène' })
+useHead({ title: 'Recherche' })
 </script>
 
 <template>
@@ -111,7 +111,7 @@ useHead({ title: 'Recherche — Les Éditions du Djembé d’Ébène' })
   padding: 0.8rem 1.2rem;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: var(--ivory);
+  background: var(--paper);
   font: inherit;
   font-size: 1.05rem;
 }

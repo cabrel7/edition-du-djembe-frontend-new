@@ -51,7 +51,9 @@ function markThumbBroken(id: number) {
   brokenThumbs.value.add(id)
 }
 
-const featuredCover = computed(() => coverUrl('book', featuredBook.value?.cover))
+// Origin passée explicitement : `featuredCover` est lu par useSeoMeta (unhead),
+// hors contexte Nuxt → useRuntimeConfig() y lèverait NUXT_E1001.
+const featuredCover = computed(() => coverUrl('book', featuredBook.value?.cover, config.public.apiBase))
 const featuredCoverBroken = ref(false)
 
 function pressCover(img: string | null | undefined) {
@@ -73,14 +75,12 @@ function domainLabel(m: Memoir): string {
   return d[String(m.domain).toLowerCase()] ?? (m.domain ? String(m.domain) : 'Recherche')
 }
 
-useHead({
-  title: 'Les Éditions du Djembé d’Ébène — Faire résonner l’invisible',
-  meta: [
-    {
-      name: 'description',
-      content: 'Maison d’édition indépendante à Québec : romans, essais, mémoires de recherche, Cahiers du Djembé et vidéos culturelles.',
-    },
-  ],
+// La description globale est portée par nuxt.config (app.head.meta).
+useHead({ title: 'Faire résonner l’invisible' })
+useSeoMeta({
+  ogTitle: 'Faire résonner l’invisible',
+  // Image du livre à la une : URL absolue backend (déjà produit par coverUrl).
+  ogImage: () => featuredCover.value ?? undefined,
 })
 </script>
 
@@ -120,11 +120,12 @@ useHead({
         >
           <span class="hero-plate__tag">À la une</span>
           <div class="hero-plate__cover">
-            <img
+            <NuxtImg
               v-if="featuredCover && !featuredCoverBroken" :src="featuredCover" :alt="`Couverture — ${featuredBook.title}`"
-              width="400" height="600" loading="eager" fetchpriority="high" decoding="async"
+              preset="cover" width="400" height="600" :sizes="HOME_FEATURED_SIZES"
+              loading="eager" fetchpriority="high" decoding="async"
               @error="featuredCoverBroken = true"
-            >
+            />
             <div v-else class="book__placeholder" aria-hidden="true">
               <svg viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect x="8" y="4" width="64" height="112" rx="3" fill="currentColor" opacity="0.12"/>
@@ -226,11 +227,13 @@ useHead({
             :to="`/cahiers-du-djembe/${pr.slug}`" class="cahier-card"
           >
             <div class="cahier-card__media">
-              <img
-                v-if="pr.cover_image && pressCover(pr.cover_image) && !brokenThumbs.has(pr.id)" :src="pressCover(pr.cover_image)" :alt="pr.title"
-                loading="lazy" decoding="async" width="640" height="480"
+              <NuxtImg
+                v-if="pr.cover_image && pressCover(pr.cover_image) && !brokenThumbs.has(pr.id)"
+                :src="pressCover(pr.cover_image) ?? undefined" :alt="pr.title"
+                preset="cover" width="640" height="480" :sizes="GRID3_SIZES"
+                loading="lazy" decoding="async"
                 @error="markThumbBroken(pr.id)"
-              >
+              />
               <div v-else class="cahier-card__fallback" aria-hidden="true">
                 <AppIcon name="newspaper" :size="40" />
               </div>
@@ -272,10 +275,11 @@ useHead({
               v-if="memoirCover(m) && !brokenCovers.has(m.id)"
               class="memoir-card__cover"
             >
-              <img
-                :src="memoirCover(m) || undefined" :alt="`Couverture — ${m.title}`"
-                width="480" height="300" loading="lazy" decoding="async" @error="markCoverBroken(m.id)"
-              >
+              <NuxtImg
+                :src="memoirCover(m) ?? undefined" :alt="`Couverture — ${m.title}`"
+                preset="cover" width="480" :sizes="GRID3_SIZES"
+                loading="lazy" decoding="async" @error="markCoverBroken(m.id)"
+              />
             </div>
             <div class="memoir-card__top">
               <span class="memoir-card__num">{{ String(i + 1).padStart(2, '0') }}</span>
@@ -316,11 +320,13 @@ useHead({
             :to="`/videos/${v.slug || v.id}`" class="video-card"
           >
             <div class="video-card__media">
-              <img
-                v-if="v.thumbnail && coverUrl('video', v.thumbnail) && !brokenThumbs.has(v.id)" :src="coverUrl('video', v.thumbnail)" :alt="v.title"
-                loading="lazy" decoding="async" width="640" height="360"
+              <NuxtImg
+                v-if="v.thumbnail && coverUrl('video', v.thumbnail) && !brokenThumbs.has(v.id)"
+                :src="coverUrl('video', v.thumbnail) ?? undefined" :alt="v.title"
+                preset="cover" width="640" height="360" :sizes="VIDEO_SIZES"
+                loading="lazy" decoding="async"
                 @error="markThumbBroken(v.id)"
-              >
+              />
               <div v-else class="video-card__fallback" aria-hidden="true" />
               <span class="video-card__play"><AppIcon name="play" :size="22" /></span>
             </div>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ hero: 'light' })
 
-useHead({ title: 'À propos — Les Éditions du Djembé d’Ébène' })
+useHead({ title: 'À propos' })
 
 const history = `Les Éditions du Djembé d'Ébène sont nées en 2025 de la conviction de leur fondateur, Dr Nono Gaël Tanguy, qu'un nombre considérable de travaux d'envergure — mémoires, thèses et essais universitaires sur l'éveil, le changement et la contribution sociétale — demeurent trop souvent confinés aux étagères des bibliothèques et aux tiroirs de leurs auteur·rice·s. Frustré de voir ces recherches de haute qualité inaccessibles au public, il a décidé de créer une maison d'édition indépendante dont la vocation première est de faire éclore ces idées pertinentes. Rapidement, cette initiative s'est élargie pour accueillir non seulement des publications académiques, mais également des romans engagés, de la poésie militante et d'autres genres porteurs de sens.`
 
@@ -132,7 +132,7 @@ const coreValues = [
 <style scoped>
 .about-history { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; }
 .about-history__text { display: grid; gap: 1rem; }
-.about-history__visual { aspect-ratio: 4/3; border-radius: var(--radius); background: linear-gradient(145deg, var(--paper-2), var(--ivory)); border: 1px solid var(--line); display: grid; place-items: center; color: var(--green); }
+.about-history__visual { aspect-ratio: 4/3; border-radius: var(--radius); background: linear-gradient(145deg, var(--paper-2), var(--paper)); border: 1px solid var(--line); display: grid; place-items: center; color: var(--green); }
 .founder { text-align: center; display: grid; gap: 1rem; justify-items: center; }
 .founder__quote { margin: 1rem 0 0; padding: 1.25rem 1.75rem; border-left: 3px solid var(--gold); font-size: 1.2rem; font-style: italic; color: var(--paper); text-align: left; max-width: 58ch; }
 .founder__bio { color: var(--on-dark-2); max-width: 54ch; line-height: 1.65; }

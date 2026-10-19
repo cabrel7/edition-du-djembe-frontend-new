@@ -27,7 +27,7 @@ const embed = computed(() => (video.value?.video_url ? videoEmbedUrl(video.value
 const platform = computed(() => (video.value?.video_url ? videoPlatform(video.value.video_url) : null))
 
 useSeoMeta({
-  title: () => `${video.value?.title ?? 'Vidéo'} — Les Éditions du Djembé d’Ébène`,
+  title: () => video.value?.title ?? 'Vidéo',
   description: () => video.value?.description?.slice(0, 160) ?? 'Vidéo publiée par les Éditions du Djembé d’Ébène.',
   ogTitle: () => video.value?.title,
   ogDescription: () => video.value?.description?.slice(0, 160) ?? undefined,

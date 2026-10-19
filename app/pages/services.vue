@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ hero: 'light' })
 
-useHead({ title: 'Services — Les Éditions du Djembé d’Ébène' })
+useHead({ title: 'Services' })
 
 const services = [
   {
@@ -167,7 +167,7 @@ const faqs = [
 .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(1.2rem, 2vw, 1.8rem); }
 @media (max-width: 900px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 540px) { .services-grid { grid-template-columns: 1fr; } }
-.service-card { display: grid; gap: 0.55rem; padding: clamp(1.25rem, 2vw, 1.75rem); background: var(--ivory); border: 1px solid var(--line); border-radius: var(--radius); }
+.service-card { display: grid; gap: 0.55rem; padding: clamp(1.25rem, 2vw, 1.75rem); background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); }
 .service-card__icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px; background: color-mix(in srgb, var(--green) 10%, transparent); color: var(--green); }
 .service-card__title { font-size: 1.15rem; font-weight: 700; color: var(--ink-900); margin-top: 0.25rem; }
 .service-card__text { font-size: 0.95rem; color: var(--ink-2); line-height: 1.6; }

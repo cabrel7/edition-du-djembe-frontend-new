@@ -30,7 +30,7 @@ function fmtDate(d: string | null) {
 }
 
 
-useHead({ title: 'Actualités — Les Éditions du Djembé d’Ébène' })
+useHead({ title: 'Actualités' })
 </script>
 
 <template>
@@ -51,10 +51,12 @@ useHead({ title: 'Actualités — Les Éditions du Djembé d’Ébène' })
 
         <NuxtLink :to="`/actualites/${featured.slug || featured.id}`" class="featured">
           <div class="featured__media">
-            <img
-              v-if="featured.image && articleImage(featured.image) && !broken.has(featured.id)" :src="articleImage(featured.image)" :alt="featured.title"
-              width="1200" height="675" loading="lazy" decoding="async" @error="broken.add(featured.id)"
-            >
+            <NuxtImg
+              v-if="featured.image && articleImage(featured.image) && !broken.has(featured.id)"
+              :src="articleImage(featured.image) ?? undefined" :alt="featured.title"
+              preset="cover" width="1200" height="675" :sizes="FEATURED_ARTICLE_SIZES"
+              loading="lazy" decoding="async" @error="broken.add(featured.id)"
+            />
             <div v-else class="featured__fallback" aria-hidden="true">
               <AppIcon name="newspaper" :size="48" />
             </div>
@@ -104,10 +106,12 @@ useHead({ title: 'Actualités — Les Éditions du Djembé d’Ébène' })
               :to="`/actualites/${a.slug || a.id}`" class="news-card"
             >
               <div class="news-card__media">
-                <img
-                  v-if="a.image && articleImage(a.image) && !broken.has(a.id)" :src="articleImage(a.image)" :alt="a.title"
-                  loading="lazy" decoding="async" width="640" height="360" @error="broken.add(a.id)"
-                >
+                <NuxtImg
+                  v-if="a.image && articleImage(a.image) && !broken.has(a.id)"
+                  :src="articleImage(a.image) ?? undefined" :alt="a.title"
+                  preset="cover" width="640" height="360" :sizes="GRID3_SIZES"
+                  loading="lazy" decoding="async" @error="broken.add(a.id)"
+                />
                 <div v-else class="news-card__fallback" aria-hidden="true">
                   <AppIcon name="newspaper" :size="36" />
                 </div>
@@ -130,7 +134,7 @@ useHead({ title: 'Actualités — Les Éditions du Djembé d’Ébène' })
 
 <style scoped>
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: clamp(1.5rem, 2vw, 2.5rem); }
-.toolbar__input { flex: 1; min-width: 220px; min-height: 48px; padding: 0.7rem 1.2rem; border: 1px solid var(--line); border-radius: 999px; background: var(--ivory); font: inherit; font-size: 0.95rem; }
+.toolbar__input { flex: 1; min-width: 220px; min-height: 48px; padding: 0.7rem 1.2rem; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); font: inherit; font-size: 0.95rem; }
 .toolbar__input:focus { outline: 2px solid var(--focus-ring); outline-offset: 2px; border-color: transparent; }
 .toolbar__count { font-size: 0.88rem; color: var(--muted); white-space: nowrap; }
 

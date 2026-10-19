@@ -51,13 +51,32 @@ const downloadUrl = computed(() =>
   memoir.value?.has_document ? `/downloads/memoir/${memoir.value.id}` : null,
 )
 
+const siteUrl = config.public.siteUrl
+const pageUrl = computed(() => `${siteUrl}/memoires/${memoir.value?.slug || slug.value}`)
+
 useSeoMeta({
-  title: () => `${memoir.value?.title ?? 'Mémoire'} — Les Éditions du Djembé d’Ébène`,
+  title: () => memoir.value?.title ?? 'Mémoire',
   description: () => memoir.value?.abstract?.slice(0, 160) ?? 'Mémoire publié aux Éditions du Djembé d’Ébène.',
   ogTitle: () => memoir.value?.title,
   ogDescription: () => memoir.value?.abstract?.slice(0, 160) ?? undefined,
   ogImage: cover ?? undefined,
 })
+
+useJsonLd('ld-memoir', computed(() => {
+  const m = memoir.value
+  if (!m) return {}
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    name: m.title,
+    creator: m.author,
+    url: pageUrl.value,
+    ...(cover ? { image: cover } : {}),
+    ...(m.abstract ? { description: m.abstract } : {}),
+    ...(m.year ? { datePublished: String(m.year) } : {}),
+    ...(m.keywords?.length ? { keywords: m.keywords.join(', ') } : {}),
+  }
+}))
 </script>
 
 <template>

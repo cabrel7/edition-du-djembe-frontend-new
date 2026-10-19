@@ -26,8 +26,20 @@ const featuredPrice = featured.value?.price != null && Number(featured.value.pri
   ? `${Number(featured.value.price).toFixed(2)} €`
   : null
 
+const siteUrl = config.public.siteUrl
+useJsonLd('ld-itemlist', computed(() => ({
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Catalogue des ouvrages — Les Éditions du Djembé d’Ébène',
+  itemListElement: books.value.map((b, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: b.title,
+    url: `${siteUrl}/livres/${b.slug || b.id}`,
+  })),
+})))
 
-useHead({ title: 'Catalogue — Les Éditions du Djembé d’Ébène' })
+useHead({ title: 'Catalogue' })
 </script>
 
 <template>
@@ -48,10 +60,11 @@ useHead({ title: 'Catalogue — Les Éditions du Djembé d’Ébène' })
 
         <NuxtLink :to="`/livres/${featured.slug || featured.id}`" class="featured">
           <div class="featured__cover">
-            <img
+            <NuxtImg
               v-if="featuredCover && !featuredBroken" :src="featuredCover" :alt="`Couverture — ${featured.title}`"
-              width="400" height="600" loading="lazy" decoding="async" @error="featuredBroken = true"
-            >
+              preset="cover" width="400" height="600" :sizes="CATALOGUE_FEATURED_SIZES"
+              loading="lazy" decoding="async" @error="featuredBroken = true"
+            />
             <div v-else class="book__placeholder" aria-hidden="true">
               <svg viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect x="8" y="4" width="64" height="112" rx="3" fill="currentColor" opacity="0.12"/>
@@ -130,7 +143,7 @@ useHead({ title: 'Catalogue — Les Éditions du Djembé d’Ébène' })
 .toolbar__input {
   flex: 1; min-width: 220px; min-height: 48px;
   padding: 0.7rem 1.2rem; border: 1px solid var(--line); border-radius: 999px;
-  background: var(--ivory); font: inherit; font-size: 0.95rem;
+  background: var(--paper); font: inherit; font-size: 0.95rem;
 }
 .toolbar__input:focus { outline: 2px solid var(--focus-ring); outline-offset: 2px; border-color: transparent; }
 .toolbar__count { font-size: 0.88rem; color: var(--muted); white-space: nowrap; }

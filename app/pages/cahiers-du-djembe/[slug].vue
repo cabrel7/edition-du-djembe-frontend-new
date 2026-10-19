@@ -59,7 +59,7 @@ function fmtDate(d: string | null) {
 }
 
 useSeoMeta({
-  title: () => `${review.value.title} — Les Cahiers du Djembé`,
+  title: () => review.value.title,
   description: () => review.value.summary?.slice(0, 160) ?? review.value.content?.slice(0, 160) ?? undefined,
   ogTitle: () => review.value.title,
   ogDescription: () => review.value.summary?.slice(0, 160) ?? undefined,

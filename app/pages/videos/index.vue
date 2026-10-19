@@ -29,7 +29,7 @@ function markBroken(id: number) {
   thumbs.value.set(id, null)
 }
 
-useHead({ title: 'Vidéos — Les Éditions du Djembé d’Ébène' })
+useHead({ title: 'Vidéos' })
 </script>
 
 <template>
@@ -74,10 +74,11 @@ useHead({ title: 'Vidéos — Les Éditions du Djembé d’Ébène' })
               :to="`/videos/${v.slug || v.id}`" class="video-card"
             >
               <div class="video-card__media">
-                <img
+                <NuxtImg
                   v-if="thumbOf(v)" :src="thumbOf(v)!" :alt="v.title"
-                  loading="lazy" decoding="async" width="640" height="360" @error="markBroken(v.id)"
-                >
+                  preset="cover" width="640" height="360" :sizes="VIDEO_SIZES"
+                  loading="lazy" decoding="async" @error="markBroken(v.id)"
+                />
                 <div v-else class="video-card__fallback" aria-hidden="true" />
                 <span class="video-card__play"><AppIcon name="play" :size="22" /></span>
               </div>
@@ -95,7 +96,7 @@ useHead({ title: 'Vidéos — Les Éditions du Djembé d’Ébène' })
 
 <style scoped>
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: clamp(1.5rem, 2vw, 2.5rem); }
-.toolbar__input { flex: 1; min-width: 220px; min-height: 48px; padding: 0.7rem 1.2rem; border: 1px solid var(--line); border-radius: 999px; background: var(--ivory); font: inherit; font-size: 0.95rem; }
+.toolbar__input { flex: 1; min-width: 220px; min-height: 48px; padding: 0.7rem 1.2rem; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); font: inherit; font-size: 0.95rem; }
 .toolbar__input:focus { outline: 2px solid var(--focus-ring); outline-offset: 2px; border-color: transparent; }
 .toolbar__count { font-size: 0.88rem; color: var(--muted); white-space: nowrap; }
 </style>

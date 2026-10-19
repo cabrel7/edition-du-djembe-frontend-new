@@ -26,13 +26,34 @@ function fmtDate(d: string | null) {
   return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
+const siteUrl = config.public.siteUrl
+const pageUrl = computed(() => `${siteUrl}/actualites/${article.value?.slug || slug.value}`)
+
 useSeoMeta({
-  title: () => `${article.value?.title ?? 'Actualité'} — Les Éditions du Djembé d’Ébène`,
+  title: () => article.value?.title ?? 'Actualité',
   description: () => article.value?.excerpt?.slice(0, 160) ?? article.value?.content?.slice(0, 160) ?? undefined,
   ogTitle: () => article.value?.title,
   ogDescription: () => article.value?.excerpt?.slice(0, 160) ?? undefined,
   ogImage: image ?? undefined,
 })
+
+useJsonLd('ld-article', computed(() => {
+  const a = article.value
+  if (!a) return {}
+  const date = isoDate(a.published_date)
+  const description = a.excerpt?.slice(0, 160) ?? a.content?.slice(0, 160) ?? undefined
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: a.title,
+    url: pageUrl.value,
+    ...(description ? { description } : {}),
+    ...(date ? { datePublished: date } : {}),
+    ...(image ? { image } : {}),
+    ...(a.author ? { author: a.author } : {}),
+    publisher: { '@id': `${siteUrl}/#organization` },
+  }
+}))
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({ hero: 'light' })
 
-useHead({ title: 'Soumettre un manuscrit — Les Éditions du Djembé d’Ébène' })
+useHead({ title: 'Soumettre un manuscrit' })
 
 const types = [
   { value: 'book', label: 'Livre' },
