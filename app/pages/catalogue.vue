@@ -22,9 +22,7 @@ const { query, filtered, visible, hasMore, loadMore, reset } = useListPage(
 
 const featuredCover = featured.value ? coverUrl('book', featured.value.cover, config.public.apiBase) : null
 const featuredBroken = ref(false)
-const featuredPrice = featured.value?.price != null && Number(featured.value.price) > 0
-  ? `${Number(featured.value.price).toFixed(2)} €`
-  : null
+const featuredPrice = formatPrice(featured.value?.price)
 
 const siteUrl = config.public.siteUrl
 useJsonLd('ld-itemlist', computed(() => ({

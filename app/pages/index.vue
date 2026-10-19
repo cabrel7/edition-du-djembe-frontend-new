@@ -60,10 +60,7 @@ function pressCover(img: string | null | undefined) {
   return coverUrl('press', img, config.public.apiBase)
 }
 
-const featuredPrice = computed(() => {
-  const p = featuredBook.value?.price
-  return p != null && Number(p) > 0 ? `${Number(p).toFixed(2)} €` : null
-})
+const featuredPrice = computed(() => formatPrice(featuredBook.value?.price))
 
 function domainLabel(m: Memoir): string {
   const d: Record<string, string> = {

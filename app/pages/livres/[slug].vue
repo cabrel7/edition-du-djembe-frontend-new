@@ -37,10 +37,7 @@ if (error.value) {
 // Résolu dans le setup (pas dans un getter unhead : NUXT_E1001 hors contexte).
 const cover = coverUrl('book', book.value?.cover, config.public.apiBase)
 const coverBroken = ref(false)
-const price = computed(() => {
-  const p = book.value?.price
-  return p != null && Number(p) > 0 ? `${Number(p).toFixed(2)} €` : null
-})
+const price = computed(() => formatPrice(book.value?.price))
 const year = computed(() =>
   book.value?.published_date ? new Date(book.value.published_date).getFullYear() : null,
 )

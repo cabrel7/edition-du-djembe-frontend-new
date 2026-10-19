@@ -5,7 +5,7 @@ const props = defineProps<{ book: Book }>()
 
 const cover = computed(() => coverUrl('book', props.book.cover))
 const year = computed(() => props.book.published_date ? new Date(props.book.published_date).getFullYear() : null)
-const price = computed(() => (props.book.price != null && Number(props.book.price) > 0 ? `${Number(props.book.price).toFixed(2)} €` : null))
+const price = computed(() => formatPrice(props.book.price))
 const coverBroken = ref(false)
 </script>
 
