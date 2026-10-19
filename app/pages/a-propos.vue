@@ -1,7 +1,11 @@
 <script setup lang="ts">
 definePageMeta({ hero: 'light' })
 
-useHead({ title: 'À propos' })
+usePageSeo({
+  title: 'À propos',
+  description: 'Fondée en 2025 à Québec par le Dr Nono Gaël Tanguy, notre maison d’édition fait rayonner les voix africaines et diasporiques, de l’université à la littérature.',
+  keywords: 'maison d’édition indépendante, Nono Gaël Tanguy, édition francophone Québec, histoire de la maison, mission éditoriale',
+})
 
 const history = `Les Éditions du Djembé d'Ébène sont nées en 2025 de la conviction de leur fondateur, Dr Nono Gaël Tanguy, qu'un nombre considérable de travaux d'envergure — mémoires, thèses et essais universitaires sur l'éveil, le changement et la contribution sociétale — demeurent trop souvent confinés aux étagères des bibliothèques et aux tiroirs de leurs auteur·rice·s. Frustré de voir ces recherches de haute qualité inaccessibles au public, il a décidé de créer une maison d'édition indépendante dont la vocation première est de faire éclore ces idées pertinentes. Rapidement, cette initiative s'est élargie pour accueillir non seulement des publications académiques, mais également des romans engagés, de la poésie militante et d'autres genres porteurs de sens.`
 

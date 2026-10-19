@@ -75,12 +75,13 @@ function domainLabel(m: Memoir): string {
   return d[String(m.domain).toLowerCase()] ?? (m.domain ? String(m.domain) : 'Recherche')
 }
 
-// La description globale est portée par nuxt.config (app.head.meta).
-useHead({ title: 'Faire résonner l’invisible' })
-useSeoMeta({
-  ogTitle: 'Faire résonner l’invisible',
-  // Image du livre à la une : URL absolue backend (déjà produit par coverUrl).
-  ogImage: () => featuredCover.value ?? undefined,
+// Description dédiée à la home (la description globale de nuxt.config reste
+// le repli des pages sans description) — cover à la une en aperçu, sinon og-default.
+usePageSeo({
+  title: 'Faire résonner l’invisible',
+  description: 'Les Éditions du Djembé d’Ébène, maison d’édition indépendante à Québec : faire résonner les voix africaines et diasporiques, du roman au mémoire de recherche.',
+  keywords: 'maison d’édition Québec, édition francophone, livres africains, mémoires de recherche, poésie engagée',
+  image: featuredCover,
 })
 </script>
 

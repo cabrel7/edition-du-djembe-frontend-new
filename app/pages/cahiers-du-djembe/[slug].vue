@@ -58,12 +58,21 @@ function fmtDate(d: string | null) {
   return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
+const siteUrl = config.public.siteUrl
+const pageUrl = `${siteUrl}${route.path}`
+// Repli non vide : le partage ne doit jamais être sans description ni image.
+const fallbackDescription = 'Article des Cahiers du Djembé : revue de presse, interview ou critique autour de la maison et de ses auteurs.'
+const fallbackImage = `${siteUrl}${OG_DEFAULT_IMAGE}`
+
 useSeoMeta({
   title: () => review.value.title,
-  description: () => review.value.summary?.slice(0, 160) ?? review.value.content?.slice(0, 160) ?? undefined,
+  description: () => review.value.summary?.slice(0, 160) || review.value.content?.slice(0, 160) || fallbackDescription,
   ogTitle: () => review.value.title,
-  ogDescription: () => review.value.summary?.slice(0, 160) ?? undefined,
-  ogImage: () => pressCover(review.value.cover_image) ?? undefined,
+  ogDescription: () => review.value.summary?.slice(0, 160) || review.value.content?.slice(0, 160) || fallbackDescription,
+  ogImage: () => pressCover(review.value.cover_image) ?? fallbackImage,
+  ogUrl: pageUrl,
+  // Contenu éditorial daté (publication_date) → article, pas website.
+  ogType: 'article',
 })
 </script>
 

@@ -58,7 +58,11 @@ watch(q, (val) => {
   navigateTo({ path: '/recherche', query }, { replace: true, immediate: false })
 })
 
-useHead({ title: 'Recherche' })
+usePageSeo({
+  title: 'Recherche',
+  description: 'Cherchez un livre, un article, un mémoire ou une vidéo dans le catalogue des Éditions du Djembé d’Ébène : par titre, auteur ou mot-clé, en un instant.',
+  keywords: 'recherche catalogue, livres, articles, mémoires, vidéos',
+})
 </script>
 
 <template>

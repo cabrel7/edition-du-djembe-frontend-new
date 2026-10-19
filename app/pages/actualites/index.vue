@@ -30,7 +30,11 @@ function fmtDate(d: string | null) {
 }
 
 
-useHead({ title: 'Actualités' })
+usePageSeo({
+  title: 'Actualités',
+  description: 'Nouvelles de la maison, parutions, événements et distinctions : suivez la vie des Éditions du Djembé d’Ébène et les parcours de nos auteurs.',
+  keywords: 'actualités édition, parutions, événements littéraires, auteurs, distinctions',
+})
 </script>
 
 <template>

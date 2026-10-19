@@ -29,7 +29,11 @@ function markBroken(id: number) {
   thumbs.value.set(id, null)
 }
 
-useHead({ title: 'Vidéos' })
+usePageSeo({
+  title: 'Vidéos',
+  description: 'Entretiens, lectures et documentaires culturels : découvrez les voix de nos auteurs à l’image, avec les vidéos originales des Éditions du Djembé d’Ébène.',
+  keywords: 'vidéos, entretiens auteurs, lectures, documentaires culturels, maison d’édition',
+})
 </script>
 
 <template>

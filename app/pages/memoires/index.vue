@@ -50,7 +50,11 @@ function domainLabel(m: Memoir): string {
   return d[String(m.domain).toLowerCase()] ?? (m.domain ? String(m.domain) : 'Recherche')
 }
 
-useHead({ title: 'Mémoires & thèses' })
+usePageSeo({
+  title: 'Mémoires & thèses',
+  description: 'Publiez, consultez et téléchargez mémoires et thèses universitaires : le savoir de la recherche, rendu accessible aux lecteurs, auteurs et bibliothèques.',
+  keywords: 'mémoires universitaires, thèses, publications académiques, savoir universitaire, téléchargement',
+})
 </script>
 
 <template>

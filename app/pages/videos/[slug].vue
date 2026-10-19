@@ -26,12 +26,19 @@ const thumb = coverUrl('video', video.value?.thumbnail, config.public.apiBase)
 const embed = computed(() => (video.value?.video_url ? videoEmbedUrl(video.value.video_url) : null))
 const platform = computed(() => (video.value?.video_url ? videoPlatform(video.value.video_url) : null))
 
+const siteUrl = config.public.siteUrl
+const pageUrl = `${siteUrl}${route.path}`
+// Repli non vide : le partage ne doit jamais être sans description ni image.
+const fallbackDescription = 'Vidéo publiée par les Éditions du Djembé d’Ébène : entretien, lecture ou documentaire culturel à regarder en ligne.'
+const fallbackImage = `${siteUrl}${OG_DEFAULT_IMAGE}`
+
 useSeoMeta({
   title: () => video.value?.title ?? 'Vidéo',
-  description: () => video.value?.description?.slice(0, 160) ?? 'Vidéo publiée par les Éditions du Djembé d’Ébène.',
+  description: () => video.value?.description?.slice(0, 160) || fallbackDescription,
   ogTitle: () => video.value?.title,
-  ogDescription: () => video.value?.description?.slice(0, 160) ?? undefined,
-  ogImage: thumb ?? undefined,
+  ogDescription: () => video.value?.description?.slice(0, 160) || fallbackDescription,
+  ogImage: thumb ?? fallbackImage,
+  ogUrl: pageUrl,
 })
 </script>
 

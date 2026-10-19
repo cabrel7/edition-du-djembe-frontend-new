@@ -1,7 +1,11 @@
 <script setup lang="ts">
 definePageMeta({ hero: 'light' })
 
-useHead({ title: 'Contact' })
+usePageSeo({
+  title: 'Contact',
+  description: 'Une question sur un ouvrage, une commande ou un manuscrit ? Écrivez-nous via le formulaire, ou joignez la maison à Québec par téléphone et par courriel.',
+  keywords: 'contact maison d’édition, formulaire Québec, téléphone, courriel, service lecteurs',
+})
 
 const contact = {
   street: '12263 boulevard Saint Claude',

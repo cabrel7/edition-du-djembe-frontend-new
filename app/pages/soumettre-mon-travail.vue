@@ -1,7 +1,11 @@
 <script setup lang="ts">
 definePageMeta({ hero: 'light' })
 
-useHead({ title: 'Soumettre un manuscrit' })
+usePageSeo({
+  title: 'Soumettre un manuscrit',
+  description: 'Vous avez écrit un livre, un mémoire ou un article ? Proposez votre manuscrit à notre maison d’édition et obtenez la réponse de notre comité de lecture.',
+  keywords: 'soumettre manuscrit, publier son ouvrage, proposition éditoriale, comité de lecture, auteur',
+})
 
 const types = [
   { value: 'book', label: 'Livre' },

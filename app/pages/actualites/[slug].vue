@@ -28,13 +28,18 @@ function fmtDate(d: string | null) {
 
 const siteUrl = config.public.siteUrl
 const pageUrl = computed(() => `${siteUrl}/actualites/${article.value?.slug || slug.value}`)
+// Repli non vide : le partage ne doit jamais être sans description ni image.
+const fallbackDescription = 'Actualité des Éditions du Djembé d’Ébène : nouvelle, événement ou distinction des auteurs à lire en ligne.'
+const fallbackImage = `${siteUrl}${OG_DEFAULT_IMAGE}`
 
 useSeoMeta({
   title: () => article.value?.title ?? 'Actualité',
-  description: () => article.value?.excerpt?.slice(0, 160) ?? article.value?.content?.slice(0, 160) ?? undefined,
+  description: () => article.value?.excerpt?.slice(0, 160) || article.value?.content?.slice(0, 160) || fallbackDescription,
   ogTitle: () => article.value?.title,
-  ogDescription: () => article.value?.excerpt?.slice(0, 160) ?? undefined,
-  ogImage: image ?? undefined,
+  ogDescription: () => article.value?.excerpt?.slice(0, 160) || article.value?.content?.slice(0, 160) || fallbackDescription,
+  ogImage: image ?? fallbackImage,
+  ogUrl: () => pageUrl.value,
+  ogType: 'article',
 })
 
 useJsonLd('ld-article', computed(() => {

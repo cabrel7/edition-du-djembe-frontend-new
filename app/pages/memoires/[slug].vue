@@ -53,13 +53,17 @@ const downloadUrl = computed(() =>
 
 const siteUrl = config.public.siteUrl
 const pageUrl = computed(() => `${siteUrl}/memoires/${memoir.value?.slug || slug.value}`)
+// Repli non vide : le partage ne doit jamais être sans description ni image.
+const fallbackDescription = 'Mémoire publié aux Éditions du Djembé d’Ébène : résumé, mot-clés et téléchargement du travail de recherche.'
+const fallbackImage = `${siteUrl}${OG_DEFAULT_IMAGE}`
 
 useSeoMeta({
   title: () => memoir.value?.title ?? 'Mémoire',
-  description: () => memoir.value?.abstract?.slice(0, 160) ?? 'Mémoire publié aux Éditions du Djembé d’Ébène.',
+  description: () => memoir.value?.abstract?.slice(0, 160) || fallbackDescription,
   ogTitle: () => memoir.value?.title,
-  ogDescription: () => memoir.value?.abstract?.slice(0, 160) ?? undefined,
-  ogImage: cover ?? undefined,
+  ogDescription: () => memoir.value?.abstract?.slice(0, 160) || fallbackDescription,
+  ogImage: cover ?? fallbackImage,
+  ogUrl: () => pageUrl.value,
 })
 
 useJsonLd('ld-memoir', computed(() => {

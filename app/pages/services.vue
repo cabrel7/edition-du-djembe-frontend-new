@@ -1,7 +1,11 @@
 <script setup lang="ts">
 definePageMeta({ hero: 'light' })
 
-useHead({ title: 'Services' })
+usePageSeo({
+  title: 'Services',
+  description: 'Correction, mise en page, ISBN, impression et diffusion : un accompagnement éditorial complet pour publier votre ouvrage en librairies et en ligne.',
+  keywords: 'accompagnement éditorial, correction manuscrit, mise en page, ISBN, diffusion librairie',
+})
 
 const services = [
   {

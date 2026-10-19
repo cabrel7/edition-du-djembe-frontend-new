@@ -47,13 +47,17 @@ const year = computed(() =>
 
 const canonical = computed(() => `/livres/${book.value?.slug || slug.value}`)
 const siteUrl = config.public.siteUrl
+// Repli non vide : le partage ne doit jamais être sans description ni image.
+const fallbackDescription = 'Livre publié aux Éditions du Djembé d’Ébène : présentation, prix et extrait à découvrir en ligne.'
+const fallbackImage = `${siteUrl}${OG_DEFAULT_IMAGE}`
 
 useSeoMeta({
   title: () => book.value?.title ?? 'Livre',
-  description: () => book.value?.description?.slice(0, 160) ?? 'Livre publié aux Éditions du Djembé.',
+  description: () => book.value?.description?.slice(0, 160) || fallbackDescription,
   ogTitle: () => book.value?.title,
-  ogDescription: () => book.value?.description?.slice(0, 160) ?? undefined,
-  ogImage: cover ?? undefined,
+  ogDescription: () => book.value?.description?.slice(0, 160) || fallbackDescription,
+  ogImage: cover ?? fallbackImage,
+  ogUrl: () => `${siteUrl}${canonical.value}`,
 })
 useHead({ link: [{ rel: 'canonical', href: computed(() => `${siteUrl}${canonical.value}`) }] })
 

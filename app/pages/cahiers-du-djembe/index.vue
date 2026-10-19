@@ -44,7 +44,11 @@ function fmtDate(d: string | null) {
   return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
-useHead({ title: 'Les Cahiers du Djembé' })
+usePageSeo({
+  title: 'Les Cahiers du Djembé',
+  description: 'Revue de presse, interviews et critiques : suivez le regard porté sur Les Éditions du Djembé d’Ébène, ses ouvrages et ses auteurs, en textes et en entretiens.',
+  keywords: 'revue de presse, interviews auteurs, critiques littéraires, Cahiers du Djembé, presse édition',
+})
 </script>
 
 <template>
