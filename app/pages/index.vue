@@ -81,7 +81,7 @@ usePageSeo({
   title: 'Faire résonner l’invisible',
   description: 'Les Éditions du Djembé d’Ébène, maison d’édition indépendante à Québec : faire résonner les voix africaines et diasporiques, du roman au mémoire de recherche.',
   keywords: 'maison d’édition Québec, édition francophone, livres africains, mémoires de recherche, poésie engagée',
-  image: featuredCover,
+  image: ogShareImage(featuredCover),
 })
 </script>
 

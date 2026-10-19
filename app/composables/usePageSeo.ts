@@ -13,6 +13,20 @@ export interface PageSeo {
 export const OG_DEFAULT_IMAGE = '/og-default.png'
 
 /**
+ * Cover brute (ex. 1024×1024, ratio livre) → image de partage recadrée au
+ * ratio ~1,91:1 (1200×630) via IPX (JPEG, fit cover, sans upscaling : la
+ * largeur reste celle de la source). Sans recadrage, WhatsApp/Facebook
+ * affichent le carré avec bandes ou coupent le titre de couverture.
+ */
+export function ogShareImage(cover: MaybeRefOrGetter<string | null | undefined>) {
+  const siteUrl = useRuntimeConfig().public.siteUrl // top-level setup (NUXT_E1001)
+  return computed(() => {
+    const url = toValue(cover)
+    return url ? `${siteUrl}/_ipx/f_jpg&s_1200x630&fit_cover/${url}` : undefined
+  })
+}
+
+/**
  * SEO des pages statiques : titre + description + balises Open Graph complètes.
  * NUXT_E1001 : useRuntimeConfig()/useRoute() uniquement au top-level du setup —
  * rien n'est rappelé à l'intérieur d'un getter unhead, tout est précalculé.

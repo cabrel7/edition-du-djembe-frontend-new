@@ -43,7 +43,7 @@ usePageSeo({
   title: 'Catalogue',
   description: 'Romans, essais, mémoires et poésie : explorez les collections des Éditions du Djembé d’Ébène et trouvez votre prochain ouvrage, du savoir à la fiction.',
   keywords: 'catalogue livres, romans, essais, mémoires, poésie, maison d’édition',
-  image: featuredCover,
+  image: ogShareImage(featuredCover),
 })
 </script>
 
