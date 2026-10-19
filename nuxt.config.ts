@@ -34,6 +34,11 @@ export default defineNuxtConfig({
         { name: 'twitter:card', content: 'summary_large_image' },
       ],
       link: [
+        // Vrai favicon (logo des Éditions — comme le legacy) : PNG en priorité,
+        // ICO (générée depuis le même logo) en repli navigateur.
+        { rel: 'icon', type: 'image/png', href: '/logo.png' },
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'apple-touch-icon', href: '/logo.png' },
         // Covers et API appelées côté client : ouvrir la connexion avant le 1er fetch.
         { rel: 'preconnect', href: 'https://api.leseditionsdudjembe.com', crossorigin: '' },
       ],
