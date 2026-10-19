@@ -42,6 +42,10 @@ useHead({
 
 <template>
   <div>
+    <!-- Barre de progression pendant la navigation client : les données de la
+         page cible bloquent brièvement le swap — sans ce feedback, l'ancienne
+         page semble « figée » alors que l'URL a déjà changé. -->
+    <NuxtLoadingIndicator color="var(--gold-700)" :height="3" />
     <SiteHeader />
     <NuxtPage />
     <SiteFooter />
