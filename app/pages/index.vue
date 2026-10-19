@@ -90,7 +90,7 @@ usePageSeo({
     <!-- ============ HERO ============ -->
     <section class="hero">
       <div class="hero__media" aria-hidden="true">
-        <BgVideo eager mp4="/hero-video.mp4" />
+        <BgVideo eager mp4="/hero-video.mp4" poster="/hero-poster.webp" />
       </div>
       <div class="hero__scrim" aria-hidden="true" />
       <div class="hero__glow" aria-hidden="true" />
@@ -370,7 +370,8 @@ usePageSeo({
 /* ---------- Hero ---------- */
 .hero {
   position: relative;
-  min-height: 92svh;
+  /* 100svh = plein écran stable (100vh brut déborde sous la barre d'adresse mobile) */
+  min-height: 100svh;
   display: flex;
   align-items: center;
   padding-block: calc(var(--header-h) + 2rem) 4rem;
