@@ -1,4 +1,6 @@
 <script setup lang="ts">
+definePageMeta({ hero: 'light' })
+
 useHead({ title: 'Services — Les Éditions du Djembé d’Ébène' })
 
 const services = [
@@ -71,19 +73,18 @@ const faqs = [
   <main>
     <PageHero
       eyebrow="Services"
-      title="Un accompagnement"
-      accent="complet"
+      title="Un accompagnement complet"
       lead="De la première ligne à la dernière page — édition, correction, impression et diffusion."
     />
 
     <section class="section section-paper">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">Notre savoir-faire</p>
-          <h2 class="h2">Six pôles <em class="accent">d’expertise</em></h2>
+          <h2 class="h2">Six pôles d’expertise</h2>
         </div>
 
-        <ul class="index-list reveal">
+        <ul class="index-list">
           <li v-for="(s, i) in services" :id="s.id" :key="s.title" class="index-list__item">
             <a :href="`#${s.id}`" class="index-list__link" @click.prevent>
               <span class="index-list__num">{{ String(i + 1).padStart(2, '0') }}</span>
@@ -97,13 +98,13 @@ const faqs = [
 
     <section class="section">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">Le détail</p>
-          <h2 class="h2">Ce que nous <em class="accent">faisons</em></h2>
+          <h2 class="h2">Ce que nous faisons</h2>
         </div>
 
         <div class="services-grid">
-          <article v-for="(s, i) in services" :id="`detail-${s.id}`" :key="s.title" class="service-card reveal" :style="{ '--d': `${(i % 3) * 80}ms` }">
+          <article v-for="s in services" :id="`detail-${s.id}`" :key="s.title" class="service-card">
             <span class="service-card__icon"><AppIcon :name="s.icon" :size="24" /></span>
             <h3 class="service-card__title">{{ s.title }}</h3>
             <p class="service-card__text">{{ s.description }}</p>
@@ -117,13 +118,13 @@ const faqs = [
 
     <section class="section section-warm">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">Notre processus</p>
-          <h2 class="h2">Quatre étapes <em class="accent">clés</em></h2>
+          <h2 class="h2">Quatre étapes clés</h2>
           <p class="lead">Un accompagnement structuré pour garantir le succès de votre projet éditorial.</p>
         </div>
         <div class="process-grid">
-          <article v-for="(p, i) in processSteps" :key="p.step" class="process-step reveal" :style="{ '--d': `${i * 80}ms` }">
+          <article v-for="p in processSteps" :key="p.step" class="process-step">
             <div class="process-step__num">{{ p.step }}</div>
             <h3 class="process-step__title">{{ p.title }}</h3>
             <p class="process-step__text">{{ p.description }}</p>
@@ -133,9 +134,9 @@ const faqs = [
     </section>
 
     <section class="section section-dark">
-      <div class="container-narrow cta-block reveal" style="text-align:center">
+      <div class="container-narrow cta-block" style="text-align:center">
         <h2 class="h2">Besoin d'un devis personnalisé ?</h2>
-        <p class="lead" style="margin-inline:auto;color:rgba(247,243,235,0.8)">
+        <p class="lead" style="margin-inline:auto;color:var(--on-dark-2)">
           Chaque projet est unique. Contactez-nous pour discuter de vos besoins et recevoir une proposition adaptée.
         </p>
         <div class="cta-actions">
@@ -147,12 +148,12 @@ const faqs = [
 
     <section class="section">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">FAQ</p>
-          <h2 class="h2">Questions <em class="accent">fréquentes</em></h2>
+          <h2 class="h2">Questions fréquentes</h2>
         </div>
         <div class="faq-list">
-          <article v-for="(f, i) in faqs" :key="f.q" class="faq-item reveal" :style="{ '--d': `${(i % 4) * 60}ms` }">
+          <article v-for="f in faqs" :key="f.q" class="faq-item">
             <h3 class="faq-item__q">{{ f.q }}</h3>
             <p class="faq-item__a">{{ f.a }}</p>
           </article>
@@ -167,7 +168,7 @@ const faqs = [
 @media (max-width: 900px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 540px) { .services-grid { grid-template-columns: 1fr; } }
 .service-card { display: grid; gap: 0.55rem; padding: clamp(1.25rem, 2vw, 1.75rem); background: var(--ivory); border: 1px solid var(--line); border-radius: var(--radius); }
-.service-card__icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px; background: rgba(45, 106, 79, 0.1); color: var(--green); }
+.service-card__icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px; background: color-mix(in srgb, var(--green) 10%, transparent); color: var(--green); }
 .service-card__title { font-size: 1.15rem; font-weight: 700; color: var(--ink-900); margin-top: 0.25rem; }
 .service-card__text { font-size: 0.95rem; color: var(--ink-2); line-height: 1.6; }
 .cta-block { display: grid; gap: 1.25rem; justify-items: center; }

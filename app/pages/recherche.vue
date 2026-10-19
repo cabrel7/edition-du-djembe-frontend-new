@@ -1,12 +1,13 @@
 <script setup lang="ts">
+definePageMeta({ hero: 'light' })
+
 import type { Book, Article, Memoir, Video } from '~/types/api'
 
-const config = useRuntimeConfig()
 const route = useRoute()
 
 const q = ref(String(route.query.q ?? ''))
 
-const { data: boot } = await useAsyncData('search-boot', () => $fetch<any>(`${config.public.apiBase}/data/null`), {
+const { data: boot } = await useAsyncData('search-boot', () => $fetch<any>(apiUrl('/data/null')), {
   server: true,
   getCachedData: () => undefined,
 })
@@ -70,7 +71,7 @@ useHead({ title: 'Recherche — Les Éditions du Djembé d’Ébène' })
 
     <section class="section">
       <div class="container-narrow">
-        <div class="search-bar reveal">
+        <div class="search-bar">
           <input
             v-model="q" type="search" placeholder="Titre, auteur, mot-clé…"
             class="search-bar__input" aria-label="Rechercher"
@@ -78,7 +79,7 @@ useHead({ title: 'Recherche — Les Éditions du Djembé d’Ébène' })
           >
         </div>
 
-        <p v-if="q.trim() && hits.length" class="search-count reveal">
+        <p v-if="q.trim() && hits.length" class="search-count">
           {{ hits.length }} résultat{{ hits.length > 1 ? 's' : '' }} pour « {{ q.trim() }} »
         </p>
 
@@ -87,7 +88,7 @@ useHead({ title: 'Recherche — Les Éditions du Djembé d’Ébène' })
         </div>
 
         <div v-if="hits.length" class="search-results" style="margin-top:1.25rem">
-          <NuxtLink v-for="(h, i) in hits" :key="`${h.kind}-${h.to}`" :to="h.to" class="search-hit reveal" :style="{ '--d': `${Math.min(i, 8) * 50}ms` }">
+          <NuxtLink v-for="h in hits" :key="`${h.kind}-${h.to}`" :to="h.to" class="search-hit">
             <span class="search-hit__kind">{{ h.kind }}</span>
             <span class="search-hit__title">{{ h.title }}</span>
             <span v-if="h.meta" class="search-hit__meta">{{ h.meta }}</span>
@@ -114,6 +115,6 @@ useHead({ title: 'Recherche — Les Éditions du Djembé d’Ébène' })
   font: inherit;
   font-size: 1.05rem;
 }
-.search-bar__input:focus { outline: 2px solid var(--gold); outline-offset: 2px; border-color: transparent; }
+.search-bar__input:focus { outline: 2px solid var(--focus-ring); outline-offset: 2px; border-color: transparent; }
 .search-count { margin-top: 1.25rem; font-size: 0.9rem; color: var(--muted); }
 </style>

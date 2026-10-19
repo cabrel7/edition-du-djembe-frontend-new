@@ -1,12 +1,16 @@
 <script setup lang="ts">
 const route = useRoute()
 
+// Ton du hero sous l'en-tête : sur hero clair, le logo et les liens passent en encre.
+const onLightHero = computed(() => route.meta.hero === 'light')
+
 const open = ref(false)
 const scrolled = ref(false)
 const hidden = ref(false)
 
 const links = [
   { to: '/catalogue', label: 'Catalogue', desc: 'Romans, essais & collections' },
+  { to: '/services', label: 'Services', desc: 'Publication, correction, impression' },
   { to: '/actualites', label: 'Actualités', desc: 'La vie de la maison' },
   { to: '/cahiers-du-djembe', label: 'Les Cahiers du Djembé', desc: 'La revue de presse & d’idées' },
   { to: '/memoires', label: 'Mémoires', desc: 'Recherche & universités' },
@@ -37,22 +41,19 @@ onBeforeUnmount(() => {
 
 watch(() => route.fullPath, () => (open.value = false))
 watch(open, (v) => {
-  if (import.meta.client) {
-    document.documentElement.style.overflow = v ? 'hidden' : ''
-    const { $lenis } = useNuxtApp()
-    const l = $lenis as { stop: () => void, start: () => void } | null
-    if (v) l?.stop()
-    else l?.start()
-  }
+  if (import.meta.client) document.documentElement.style.overflow = v ? 'hidden' : ''
 })
 </script>
 
 <template>
-  <header class="hdr" :class="{ 'is-scrolled': scrolled, 'is-hidden': hidden, 'is-open': open }">
+  <header
+    class="hdr"
+    :class="{ 'is-scrolled': scrolled, 'is-hidden': hidden, 'is-open': open, 'is-on-light': onLightHero }"
+  >
     <div class="hdr__bar container">
       <NuxtLink to="/" class="hdr__logo" aria-label="Les Éditions du Djembé d’Ébène — accueil">
-        <img src="/logo.png" alt="" width="40" height="40">
-        <span class="hdr__word">Les Éditions<br>du Djembé d’<em>Ébène</em></span>
+        <img src="/logo.png" alt="" width="40" height="40" loading="eager" fetchpriority="high">
+        <span class="hdr__word">Les Éditions<br>du Djembé d’Ébène</span>
       </NuxtLink>
 
       <nav class="hdr__nav" aria-label="Navigation principale">
@@ -112,6 +113,7 @@ watch(open, (v) => {
 }
 .hdr.is-hidden { transform: translateY(-110%); }
 .hdr.is-open { color: var(--paper); }
+.hdr.is-on-light:not(.is-scrolled):not(.is-open) { color: var(--ink-950); }
 
 .hdr__bar {
   position: relative;
@@ -128,17 +130,16 @@ watch(open, (v) => {
   transition: background 0.4s, border-color 0.4s, box-shadow 0.4s, backdrop-filter 0.4s;
 }
 .is-scrolled:not(.is-open) .hdr__bar {
-  background: rgba(12, 26, 18, 0.82);
+  background: color-mix(in srgb, var(--ink-950) 82%, transparent);
   border-color: var(--line-light);
-  box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.55);
+  box-shadow: 0 10px 30px -18px color-mix(in srgb, var(--black) 55%, transparent);
   -webkit-backdrop-filter: blur(14px) saturate(160%);
   backdrop-filter: blur(14px) saturate(160%);
 }
 
 .hdr__logo { display: flex; align-items: center; gap: 0.6rem; color: inherit; }
-.hdr__logo img { width: 38px; height: 38px; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.18)); }
+.hdr__logo img { width: 38px; height: 38px; filter: drop-shadow(0 4px 10px color-mix(in srgb, var(--black) 18%, transparent)); }
 .hdr__word { font-size: 0.95rem; letter-spacing: -0.01em; line-height: 1.15; white-space: nowrap; }
-.hdr__word em { font-style: normal; color: var(--gold); }
 
 .hdr__nav { display: none; gap: 0.25rem; }
 .hdr__link {
@@ -151,7 +152,7 @@ watch(open, (v) => {
   transition: opacity 0.2s, background 0.2s;
   white-space: nowrap;
 }
-.hdr__link:hover { opacity: 1; background: rgba(232, 163, 76, 0.14); }
+.hdr__link:hover { opacity: 1; background: color-mix(in srgb, var(--gold) 14%, transparent); }
 .hdr__link.active { opacity: 1; }
 .hdr__link.active::after {
   content: '';
@@ -229,13 +230,17 @@ watch(open, (v) => {
   transition: opacity 0.6s var(--ease), transform 0.6s var(--ease), color 0.2s;
 }
 .mm.is-open .mm__link { opacity: 1; transform: none; transition-delay: calc(0.15s + var(--i) * 0.05s); }
-.mm__link:hover, .mm__link.router-link-active { color: var(--gold); }
-.mm__num { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; color: var(--gold); }
+.mm__link:hover, .mm__link.router-link-active { color: var(--gold-300); }
+.mm__num { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; color: var(--gold-300); }
 .mm__body { display: grid; gap: 0.2rem; }
 .mm__label { font-size: clamp(1.3rem, 5vw, 1.7rem); line-height: 1.15; }
-.mm__desc { font-size: 0.8rem; color: rgba(245, 239, 226, 0.5); }
+.mm__desc { font-size: 0.8rem; color: var(--on-dark-3); }
 .mm__foot { display: grid; gap: 1rem; justify-items: stretch; }
 .btn-block { justify-content: center; }
+
+@media (max-width: 420px) {
+  .hdr__word { display: none; }
+}
 
 @media (min-width: 640px) {
   .hdr__cta-short { display: none; }
@@ -243,7 +248,7 @@ watch(open, (v) => {
   .hdr__cta { padding: 0.6rem 1.1rem; }
   .hdr__word { font-size: 1.05rem; }
 }
-@media (min-width: 1100px) {
+@media (min-width: 1180px) {
   .hdr__nav { display: flex; }
   .hdr__burger, .mm { display: none; }
 }

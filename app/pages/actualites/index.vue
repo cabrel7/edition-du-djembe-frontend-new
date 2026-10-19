@@ -1,11 +1,13 @@
 <script setup lang="ts">
+definePageMeta({ hero: 'light' })
+
 import type { Article } from '~/types/api'
 
 const config = useRuntimeConfig()
 
 const { data, status } = await useAsyncData<{ articles: Article[] }>(
   'news-articles',
-  () => $fetch(`${config.public.apiBase}/data/article`),
+  () => $fetch(apiUrl('/data/article')),
   { server: true },
 )
 
@@ -19,19 +21,14 @@ const { query, filtered, visible, hasMore, loadMore, reset } = useListPage(
 )
 
 const broken = ref(new Set<number>())
+function articleImage(img: string | null | undefined) {
+  return coverUrl('article', img, config.public.apiBase)
+}
 function fmtDate(d: string | null) {
   if (!d) return ''
   return new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
 }
 
-const marquee = [
-  'La vie de la maison',
-  'Distinctions',
-  'Événements',
-  'Nouveautés',
-  'Auteurs & autrices',
-  'Coulisses',
-]
 
 useHead({ title: 'Actualités — Les Éditions du Djembé d’Ébène' })
 </script>
@@ -40,32 +37,23 @@ useHead({ title: 'Actualités — Les Éditions du Djembé d’Ébène' })
   <main>
     <PageHero
       eyebrow="Actualités"
-      title="La vie de"
-      accent="la maison"
+      title="La vie de la maison"
       lead="Dernières nouvelles, événements et distinctions de nos auteurs."
     />
-
-    <div class="mq" aria-hidden="true">
-      <div class="mq__track">
-        <template v-for="n in 2" :key="n">
-          <span v-for="m in marquee" :key="`${n}-${m}`" class="mq__item">{{ m }} <b>✦</b></span>
-        </template>
-      </div>
-    </div>
 
     <!-- À la une -->
     <section v-if="featured" class="section section-paper">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">À la une</p>
-          <h2 class="h2">L’actualité du <em class="accent">moment</em></h2>
+          <h2 class="h2">L’actualité du moment</h2>
         </div>
 
-        <NuxtLink :to="`/actualites/${featured.slug || featured.id}`" class="featured reveal">
+        <NuxtLink :to="`/actualites/${featured.slug || featured.id}`" class="featured">
           <div class="featured__media">
             <img
-              v-if="featured.image && !broken.has(featured.id)" :src="featured.image" :alt="featured.title"
-              width="1200" height="675" @error="broken.add(featured.id)"
+              v-if="featured.image && articleImage(featured.image) && !broken.has(featured.id)" :src="articleImage(featured.image)" :alt="featured.title"
+              width="1200" height="675" loading="lazy" decoding="async" @error="broken.add(featured.id)"
             >
             <div v-else class="featured__fallback" aria-hidden="true">
               <AppIcon name="newspaper" :size="48" />
@@ -84,12 +72,12 @@ useHead({ title: 'Actualités — Les Éditions du Djembé d’Ébène' })
     <!-- Liste -->
     <section class="section">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">Toutes les nouvelles</p>
-          <h2 class="h2">Dernières <em class="accent">parutions</em></h2>
+          <h2 class="h2">Dernières parutions</h2>
         </div>
 
-        <div class="toolbar reveal">
+        <div class="toolbar">
           <input
             v-model="query" type="search" placeholder="Rechercher un article…"
             class="toolbar__input" aria-label="Rechercher un article"
@@ -112,13 +100,13 @@ useHead({ title: 'Actualités — Les Éditions du Djembé d’Ébène' })
         <template v-else>
           <div class="news-grid">
             <NuxtLink
-              v-for="(a, i) in visible" :key="a.id"
-              :to="`/actualites/${a.slug || a.id}`" class="news-card reveal" :style="{ '--d': `${(i % 3) * 80}ms` }"
+              v-for="a in visible" :key="a.id"
+              :to="`/actualites/${a.slug || a.id}`" class="news-card"
             >
               <div class="news-card__media">
                 <img
-                  v-if="a.image && !broken.has(a.id)" :src="a.image" :alt="a.title"
-                  loading="lazy" width="640" height="360" @error="broken.add(a.id)"
+                  v-if="a.image && articleImage(a.image) && !broken.has(a.id)" :src="articleImage(a.image)" :alt="a.title"
+                  loading="lazy" decoding="async" width="640" height="360" @error="broken.add(a.id)"
                 >
                 <div v-else class="news-card__fallback" aria-hidden="true">
                   <AppIcon name="newspaper" :size="36" />
@@ -143,7 +131,7 @@ useHead({ title: 'Actualités — Les Éditions du Djembé d’Ébène' })
 <style scoped>
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: clamp(1.5rem, 2vw, 2.5rem); }
 .toolbar__input { flex: 1; min-width: 220px; min-height: 48px; padding: 0.7rem 1.2rem; border: 1px solid var(--line); border-radius: 999px; background: var(--ivory); font: inherit; font-size: 0.95rem; }
-.toolbar__input:focus { outline: 2px solid var(--gold); outline-offset: 2px; border-color: transparent; }
+.toolbar__input:focus { outline: 2px solid var(--focus-ring); outline-offset: 2px; border-color: transparent; }
 .toolbar__count { font-size: 0.88rem; color: var(--muted); white-space: nowrap; }
 
 .featured { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: center; color: inherit; transition: transform 0.3s var(--ease); }

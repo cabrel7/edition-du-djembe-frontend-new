@@ -28,8 +28,8 @@ const services = [
       <div class="site-footer__grid">
         <div>
           <NuxtLink to="/" class="site-logo" style="color: var(--paper)">
-            <img src="/logo.png" alt="" width="48" height="48">
-            <span>Les Éditions<br>du Djembé d’<em>Ébène</em></span>
+            <img src="/logo.png" alt="" width="48" height="48" loading="lazy" decoding="async">
+            <span>Les Éditions<br>du Djembé d’Ébène</span>
           </NuxtLink>
           <p class="site-footer__tagline">
             Votre partenaire de confiance pour la publication et la diffusion
@@ -76,7 +76,6 @@ const services = [
   max-width: 34ch;
   font-size: var(--step-0);
   line-height: 1.6;
-  color: rgba(247, 243, 235, 0.65);
+  color: var(--on-dark-2);
 }
-.site-logo em { font-style: normal; color: var(--gold); }
 </style>

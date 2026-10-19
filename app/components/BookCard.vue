@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Book } from '~/types/api'
 
-const props = defineProps<{ book: Book; delay?: number }>()
+const props = defineProps<{ book: Book }>()
 
 const cover = computed(() => coverUrl('book', props.book.cover))
 const year = computed(() => props.book.published_date ? new Date(props.book.published_date).getFullYear() : null)
@@ -10,10 +10,10 @@ const coverBroken = ref(false)
 </script>
 
 <template>
-  <NuxtLink :to="`/livres/${book.slug || book.id}`" class="book reveal" :style="{ '--d': `${(delay ?? 0) * 90}ms` }">
+  <NuxtLink :to="`/livres/${book.slug || book.id}`" class="book">
     <div class="book__cover">
       <img
-        v-if="cover && !coverBroken" :src="cover" :alt="`Couverture — ${book.title}`" loading="lazy" width="400" height="600"
+        v-if="cover && !coverBroken" :src="cover" :alt="`Couverture — ${book.title}`" loading="lazy" decoding="async" width="400" height="600"
         style="width:100%;height:100%;object-fit:cover"
         @error="coverBroken = true"
       >

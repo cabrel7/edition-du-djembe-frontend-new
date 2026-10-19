@@ -24,8 +24,8 @@ onMounted(() => {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   if (saveData || reduced) return
 
-  const reveal = () => { playing.value = true }
-  v.addEventListener('playing', reveal, { once: true })
+  const onPlaying = () => { playing.value = true }
+  v.addEventListener('playing', onPlaying, { once: true })
   if (props.rate !== 1) {
     const keepRate = () => { if (v.playbackRate !== props.rate) v.playbackRate = props.rate }
     for (const ev of ['playing', 'seeked', 'ratechange', 'loadeddata']) v.addEventListener(ev, keepRate)

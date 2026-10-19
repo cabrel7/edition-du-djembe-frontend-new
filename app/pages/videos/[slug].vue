@@ -14,7 +14,7 @@ interface VideoDetail {
 
 const { data: video, error } = await useAsyncData<VideoDetail>(
   () => `video-${slug.value}`,
-  () => $fetch(`${config.public.apiBase}/videos/${slug.value}`),
+  () => $fetch(apiUrl(`/videos/${slug.value}`)),
   { server: true },
 )
 
@@ -24,6 +24,7 @@ if (error.value) {
 
 const thumb = coverUrl('video', video.value?.thumbnail, config.public.apiBase)
 const embed = computed(() => (video.value?.video_url ? videoEmbedUrl(video.value.video_url) : null))
+const platform = computed(() => (video.value?.video_url ? videoPlatform(video.value.video_url) : null))
 
 useSeoMeta({
   title: () => `${video.value?.title ?? 'Vidéo'} — Les Éditions du Djembé d’Ébène`,
@@ -39,13 +40,13 @@ useSeoMeta({
     <section class="video-hero">
       <div class="video-hero__glow" aria-hidden="true" />
       <div class="container-narrow" style="position:relative">
-        <p class="eyebrow reveal">
+        <p class="eyebrow">
           <NuxtLink to="/videos" class="crumb">Vidéos</NuxtLink>
         </p>
-        <h1 class="video-hero__title reveal">{{ video?.title }}</h1>
-        <p v-if="video?.description" class="video-hero__lead reveal">{{ video.description }}</p>
+        <h1 class="video-hero__title">{{ video?.title }}</h1>
+        <p v-if="video?.description" class="video-hero__lead">{{ video.description }}</p>
 
-        <div class="embed-16x9 reveal" style="margin-top:1.75rem">
+        <div class="embed-16x9" style="margin-top:1.75rem">
           <iframe
             v-if="embed" :src="embed" :title="video?.title"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -56,8 +57,9 @@ useSeoMeta({
             class="video-fallback"
           >
             <AppIcon name="play" :size="48" />
-            <span>Voir la vidéo</span>
+            <span>Voir la vidéo{{ platform ? ` sur ${platform}` : '' }}</span>
           </a>
+          <span v-if="platform" class="chip video-hero__platform">{{ platform }}</span>
         </div>
       </div>
     </section>
@@ -78,14 +80,28 @@ useSeoMeta({
   inset: -30% -10% auto;
   height: 110%;
   background:
-    radial-gradient(50% 55% at 70% 20%, rgba(232, 163, 76, 0.14), transparent 70%),
-    radial-gradient(40% 50% at 20% 60%, rgba(45, 106, 79, 0.18), transparent 70%);
+    radial-gradient(50% 55% at 70% 20%, color-mix(in srgb, var(--gold) 14%, transparent), transparent 70%),
+    radial-gradient(40% 50% at 20% 60%, color-mix(in srgb, var(--green) 18%, transparent), transparent 70%);
   pointer-events: none;
 }
-.video-hero__title { font-size: var(--step-4); color: #fff; line-height: 1.08; margin-top: 0.75rem; }
-.video-hero__lead { color: rgba(247, 243, 235, 0.75); margin-top: 1rem; max-width: 58ch; line-height: 1.65; }
+.video-hero__title { font-size: var(--step-4); color: var(--paper); line-height: 1.08; margin-top: 0.75rem; }
+.video-hero__lead { color: var(--on-dark-2); margin-top: 1rem; max-width: 58ch; line-height: 1.65; }
 .crumb { color: inherit; }
-.crumb:hover { color: var(--gold); }
-.video-fallback { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 0.75rem; color: var(--gold); text-decoration: none; background: linear-gradient(160deg, var(--ink-800), var(--ink-900)); }
+.crumb:hover { color: var(--gold-300); }
+.video-fallback { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 0.75rem; color: var(--gold-300); text-decoration: none; background: linear-gradient(160deg, var(--ink-800), var(--ink-900)); }
 .video-fallback span { font-size: 0.95rem; font-weight: 600; }
+.video-hero__platform {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 3;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--ink-950) 78%, transparent);
+  border-color: color-mix(in srgb, var(--gold-300) 45%, transparent);
+  color: var(--paper);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
 </style>

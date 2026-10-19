@@ -1,4 +1,6 @@
 <script setup lang="ts">
+definePageMeta({ hero: 'light' })
+
 const route = useRoute()
 const config = useRuntimeConfig()
 const slug = computed(() => String(route.params.slug))
@@ -24,7 +26,7 @@ interface BookDetail {
 
 const { data: book, error, status } = await useAsyncData<BookDetail>(
   () => `book-${slug.value}`,
-  () => $fetch(`${config.public.apiBase}/books/${slug.value}`),
+  () => $fetch(apiUrl(`/books/${slug.value}`)),
   { server: true },
 )
 
@@ -59,23 +61,24 @@ useHead({ link: [{ rel: 'canonical', href: canonical.value }] })
   <main class="page-book">
     <section class="section page-book__hero">
       <div class="container page-book__grid">
-        <div class="page-book__cover reveal-img">
+        <div class="page-book__cover">
           <img
             v-if="cover && !coverBroken" :src="cover" :alt="`Couverture — ${book?.title}`"
-            width="480" height="720" @error="coverBroken = true"
+            width="480" height="720" loading="eager" fetchpriority="high" decoding="async"
+            @error="coverBroken = true"
           >
           <div v-else class="page-book__cover-fallback" aria-hidden="true" />
         </div>
 
         <div class="page-book__info">
-          <p class="eyebrow reveal">
+          <p class="eyebrow">
             <NuxtLink to="/catalogue" class="crumb">Catalogue</NuxtLink>
             <template v-if="book?.category"> · {{ book.category }}</template>
           </p>
-          <h1 class="h1 reveal">{{ book?.title }}</h1>
-          <p class="page-book__author reveal">{{ book?.author }}</p>
+          <h1 class="h1">{{ book?.title }}</h1>
+          <p class="page-book__author">{{ book?.author }}</p>
 
-          <dl class="page-book__specs reveal">
+          <dl class="page-book__specs">
             <div v-if="year"><dt>Parution</dt><dd>{{ year }}</dd></div>
             <div v-if="book?.pages"><dt>Pages</dt><dd>{{ book.pages }}</dd></div>
             <div v-if="book?.language"><dt>Langue</dt><dd>{{ book.language }}</dd></div>
@@ -83,19 +86,20 @@ useHead({ link: [{ rel: 'canonical', href: canonical.value }] })
             <div v-if="book?.edition"><dt>Édition</dt><dd>{{ book.edition }}</dd></div>
           </dl>
 
-          <div class="page-book__actions reveal">
+          <div class="page-book__actions">
             <span v-if="price" class="page-book__price">{{ price }}</span>
             <a
-              v-if="book?.has_excerpt" :href="`${config.public.apiBase}/downloadbook/${book.id}`"
-              class="btn btn-primary" download
-            >
-              Télécharger l’extrait <AppIcon name="download" :size="16" />
-            </a>
-            <a
-              v-if="book?.amazon_url" :href="book.amazon_url" class="btn btn-ghost on-light"
+              v-if="book?.amazon_url" :href="book.amazon_url"
+              class="btn btn-primary"
               target="_blank" rel="noopener noreferrer"
             >
-              Amazon <AppIcon name="external" :size="14" />
+              Acheter <AppIcon name="external" :size="14" />
+            </a>
+            <a
+              v-if="book?.has_excerpt" :href="`/downloads/book/${book.id}`"
+              class="btn btn-ghost on-light" download
+            >
+              Télécharger l’extrait <AppIcon name="download" :size="16" />
             </a>
           </div>
         </div>
@@ -103,7 +107,7 @@ useHead({ link: [{ rel: 'canonical', href: canonical.value }] })
     </section>
 
     <section v-if="book?.description" class="section section-paper">
-      <div class="container-narrow page-book__longform reveal">
+      <div class="container-narrow page-book__longform">
         <h2 class="h3">Présentation</h2>
         <p class="prose">{{ book.description }}</p>
       </div>
@@ -128,28 +132,38 @@ useHead({ link: [{ rel: 'canonical', href: canonical.value }] })
   background: var(--ink-800);
   box-shadow: var(--shadow-lg);
 }
+/* Livre ouvert : leré / tranche dorée à la reliure */
+.page-book__cover::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 14px;
+  z-index: 1;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--black) 20%, transparent), color-mix(in srgb, var(--gold) 40%, transparent) 60%, transparent);
+  pointer-events: none;
+}
 .page-book__cover img { width: 100%; height: 100%; object-fit: cover; }
 .page-book__cover-fallback { width: 100%; height: 100%; background: linear-gradient(135deg, var(--ink-800), var(--ink-900)); }
 .page-book__info { display: grid; gap: 1.1rem; padding-top: 0.5rem; }
 .crumb { color: inherit; }
-.crumb:hover { color: var(--gold); }
+.crumb:hover { color: var(--gold-700); }
 .page-book__author { font-size: 1.15rem; color: var(--muted); }
 .page-book__specs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1rem 1.5rem;
   margin: 0.5rem 0 0;
-  padding: 1.1rem 0;
+  padding: 1.25rem 0;
   border-block: 1px solid var(--line);
 }
-.page-book__specs div { display: grid; gap: 0.2rem; }
+.page-book__specs div { display: grid; gap: 0.25rem; min-width: 0; }
 .page-book__specs dt { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
-.page-book__specs dd { margin: 0; font-size: 0.95rem; }
+.page-book__specs dd { margin: 0; font-size: 0.95rem; color: var(--ink); overflow-wrap: anywhere; }
 .mono { font-variant-numeric: tabular-nums; }
 .page-book__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
-.page-book__price { font-size: 1.5rem; color: var(--gold); font-weight: 600; }
+.page-book__price { font-size: 1.5rem; color: var(--gold-700); font-weight: 600; }
 .page-book__longform { display: grid; gap: 1rem; padding-block: 0.5rem; }
-.prose { white-space: pre-line; line-height: 1.7; color: var(--ink-800, #24382c); max-width: 65ch; }
+.prose { white-space: pre-line; line-height: 1.7; color: var(--ink); max-width: 65ch; }
 
 @media (max-width: 760px) {
   .page-book__grid { grid-template-columns: 1fr; }

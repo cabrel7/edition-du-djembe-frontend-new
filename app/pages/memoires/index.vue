@@ -1,15 +1,39 @@
 <script setup lang="ts">
-import type { Memoir } from '~/types/api'
+definePageMeta({ hero: 'light' })
 
-const config = useRuntimeConfig()
+import type { Memoir } from '~/types/api'
 
 const { data, status } = await useAsyncData<{ memoirs: Memoir[] }>(
   'listing-memoirs',
-  () => $fetch(`${config.public.apiBase}/data/memoir`),
+  () => $fetch(apiUrl('/data/memoir')),
   { server: true },
 )
 
 const memoirs = computed(() => data.value?.memoirs ?? [])
+
+// /data/memoir n'expose pas `cover` (colonne hors liste publique côté API) ;
+// /getbasedata livre les 3 derniers mémoires avec leur couverture → pont par id.
+const { data: base } = await useAsyncData<{ lastmemoirs?: { id: number; cover: string | null }[] }>(
+  'memoir-covers',
+  () => $fetch(apiUrl('/getbasedata')),
+  { server: true },
+)
+const brokenCovers = ref(new Set<number>())
+const bridgeCovers = computed(() => {
+  const map = new Map<number, string>()
+  for (const item of base.value?.lastmemoirs ?? []) {
+    const url = coverUrl('memoir', item.cover)
+    if (url) map.set(item.id, url)
+  }
+  return map
+})
+function memoirCover(m: Memoir): string | null {
+  if (m.cover) return coverUrl('memoir', m.cover)
+  return bridgeCovers.value.get(m.id) ?? null
+}
+function markCoverBroken(id: number) {
+  brokenCovers.value.add(id)
+}
 
 const { query, filtered, visible, hasMore, loadMore, reset } = useListPage(
   memoirs,
@@ -33,19 +57,18 @@ useHead({ title: 'Mémoires & thèses — Les Éditions du Djembé d’Ébène' 
   <main>
     <PageHero
       eyebrow="Recherche"
-      title="Le savoir"
-      accent="en partage"
+      title="Le savoir en partage"
       lead="Mémoires et thèses issus des universités — consultation, abstracts et téléchargement."
     />
 
     <section class="section section-paper">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">Travaux publiés</p>
-          <h2 class="h2">Mémoires & <em class="accent">thèses</em></h2>
+          <h2 class="h2">Mémoires & thèses</h2>
         </div>
 
-        <div class="toolbar reveal">
+        <div class="toolbar">
           <input
             v-model="query" type="search" placeholder="Rechercher un titre, un auteur, un mot-clé…"
             class="toolbar__input" aria-label="Rechercher un mémoire"
@@ -69,8 +92,17 @@ useHead({ title: 'Mémoires & thèses — Les Éditions du Djembé d’Ébène' 
           <div class="memoirs-grid">
             <NuxtLink
               v-for="(m, i) in visible" :key="m.id"
-              :to="`/memoires/${m.slug || m.id}`" class="memoir-card reveal" :style="{ '--d': `${(i % 3) * 80}ms` }"
+              :to="`/memoires/${m.slug || m.id}`" class="memoir-card"
             >
+              <div
+                v-if="memoirCover(m) && !brokenCovers.has(m.id)"
+                class="memoir-card__cover"
+              >
+                <img
+                  :src="memoirCover(m) || undefined" :alt="`Couverture — ${m.title}`"
+                  width="480" height="300" loading="lazy" decoding="async" @error="markCoverBroken(m.id)"
+                >
+              </div>
               <div class="memoir-card__top">
                 <span class="memoir-card__num">{{ String(i + 1).padStart(2, '0') }}</span>
                 <span class="chip chip--line">{{ domainLabel(m) }}</span>
@@ -93,9 +125,9 @@ useHead({ title: 'Mémoires & thèses — Les Éditions du Djembé d’Ébène' 
     </section>
 
     <section class="section section-dark">
-      <div class="container-narrow cta reveal" style="text-align:center">
+      <div class="container-narrow cta" style="text-align:center">
         <h2 class="h2">Vous avez rédigé un mémoire ?</h2>
-        <p class="lead" style="margin-inline:auto;color:rgba(247,243,235,0.75)">
+        <p class="lead" style="margin-inline:auto;color:var(--on-dark-2)">
           Faites-le publier et sortez-le des tiroirs de la recherche.
         </p>
         <NuxtLink to="/soumettre-mon-travail" class="btn btn-primary">Soumettre <AppIcon name="arrow-right" /></NuxtLink>
@@ -106,8 +138,8 @@ useHead({ title: 'Mémoires & thèses — Les Éditions du Djembé d’Ébène' 
 
 <style scoped>
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: clamp(1.5rem, 2vw, 2.5rem); }
-.toolbar__input { flex: 1; min-width: 220px; min-height: 48px; padding: 0.7rem 1.2rem; border: 1px solid var(--line); border-radius: 999px; background: var(--ivory); font: inherit; font-size: 0.95rem; }
-.toolbar__input:focus { outline: 2px solid var(--gold); outline-offset: 2px; border-color: transparent; }
+.toolbar__input { flex: 1; min-width: 220px; min-height: 48px; padding: 0.7rem 1.2rem; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); font: inherit; font-size: 0.95rem; }
+.toolbar__input:focus { outline: 2px solid var(--focus-ring); outline-offset: 2px; border-color: transparent; }
 .toolbar__count { font-size: 0.88rem; color: var(--muted); white-space: nowrap; }
 .cta { display: grid; gap: 1.25rem; justify-items: center; }
 </style>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+definePageMeta({ hero: 'light' })
+
 useHead({ title: 'À propos — Les Éditions du Djembé d’Ébène' })
 
 const history = `Les Éditions du Djembé d'Ébène sont nées en 2025 de la conviction de leur fondateur, Dr Nono Gaël Tanguy, qu'un nombre considérable de travaux d'envergure — mémoires, thèses et essais universitaires sur l'éveil, le changement et la contribution sociétale — demeurent trop souvent confinés aux étagères des bibliothèques et aux tiroirs de leurs auteur·rice·s. Frustré de voir ces recherches de haute qualité inaccessibles au public, il a décidé de créer une maison d'édition indépendante dont la vocation première est de faire éclore ces idées pertinentes. Rapidement, cette initiative s'est élargie pour accueillir non seulement des publications académiques, mais également des romans engagés, de la poésie militante et d'autres genres porteurs de sens.`
@@ -20,42 +22,25 @@ const coreValues = [
   { icon: 'heart', title: 'Passion', description: "L'amour des livres et de la transmission anime notre équipe." },
 ]
 
-const marquee = [
-  'Voix africaines',
-  'Diasporas',
-  'Littérature engagée',
-  'Pensée critique',
-  'Poésie militante',
-  'Essais universitaires',
-]
 </script>
 
 <template>
   <main>
     <PageHero
       eyebrow="La maison"
-      title="Faire résonner"
-      accent="l’invisible"
+      title="Faire résonner l’invisible"
       lead="Une maison d’édition indépendante dédiée aux voix africaines et diasporiques, fondée en 2025 à Québec."
     />
-
-    <div class="mq" aria-hidden="true">
-      <div class="mq__track">
-        <template v-for="n in 2" :key="n">
-          <span v-for="m in marquee" :key="`${n}-${m}`" class="mq__item">{{ m }} <b>✦</b></span>
-        </template>
-      </div>
-    </div>
 
     <!-- Histoire -->
     <section class="section section-paper">
       <div class="container about-history">
-        <div class="about-history__text reveal">
+        <div class="about-history__text">
           <p class="eyebrow">Notre histoire</p>
-          <h2 class="h2" style="margin-top:0.75rem">Née d’une <em class="accent">conviction</em></h2>
+          <h2 class="h2" style="margin-top:0.75rem">Née d’une conviction</h2>
           <p class="detail-prose">{{ history }}</p>
         </div>
-        <div class="about-history__visual reveal-img" aria-hidden="true">
+        <div class="about-history__visual" aria-hidden="true">
           <AppIcon name="book" :size="64" />
         </div>
       </div>
@@ -64,28 +49,28 @@ const marquee = [
     <!-- Mission / Vision / Valeurs -->
     <section class="section section-warm">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">Ce qui nous guide</p>
-          <h2 class="h2">Mission, vision & <em class="accent">valeurs</em></h2>
+          <h2 class="h2">Mission, vision & valeurs</h2>
         </div>
         <div class="stat-grid">
-          <article class="stat-card reveal">
+          <article class="stat-card">
             <span class="stat-card__icon"><AppIcon name="target" :size="22" /></span>
             <h3 class="stat-card__title">Notre Mission</h3>
             <p class="stat-card__text">{{ mission }}</p>
           </article>
-          <article class="stat-card reveal" style="--d:80ms">
+          <article class="stat-card">
             <span class="stat-card__icon"><AppIcon name="eye" :size="22" /></span>
             <h3 class="stat-card__title">Notre Vision</h3>
             <p class="stat-card__text">{{ vision }}</p>
           </article>
-          <article class="stat-card reveal" style="--d:160ms">
+          <article class="stat-card">
             <span class="stat-card__icon"><AppIcon name="heart" :size="22" /></span>
             <h3 class="stat-card__title">Nos Valeurs</h3>
             <p class="stat-card__text">{{ values }}</p>
           </article>
         </div>
-        <article class="stat-card reveal" style="margin-top:clamp(1rem,2vw,1.5rem)">
+        <article class="stat-card" style="margin-top:clamp(1rem,2vw,1.5rem)">
           <h3 class="stat-card__title">La symbolique</h3>
           <p class="stat-card__text">{{ symbolism }}</p>
         </article>
@@ -95,12 +80,12 @@ const marquee = [
     <!-- Ce qui nous définit -->
     <section class="section">
       <div class="container">
-        <div class="section-head center reveal">
+        <div class="section-head center">
           <p class="eyebrow">Ce qui nous définit</p>
-          <h2 class="h2">Quatre <em class="accent">piliers</em></h2>
+          <h2 class="h2">Quatre piliers</h2>
         </div>
         <div class="value-grid">
-          <article v-for="(v, i) in coreValues" :key="v.title" class="value-card reveal" :style="{ '--d': `${i * 80}ms` }">
+          <article v-for="v in coreValues" :key="v.title" class="value-card">
             <span class="value-card__icon"><AppIcon :name="v.icon" :size="24" /></span>
             <h3 class="value-card__title">{{ v.title }}</h3>
             <p class="value-card__text">{{ v.description }}</p>
@@ -111,9 +96,9 @@ const marquee = [
 
     <!-- Fondateur -->
     <section class="section section-dark">
-      <div class="container-narrow founder reveal">
+      <div class="container-narrow founder">
         <p class="eyebrow">Fondateur</p>
-        <h2 class="h2" style="margin-top:0.75rem;color:#fff">Dr Nono Gaël Tanguy</h2>
+        <h2 class="h2" style="margin-top:0.75rem;color: var(--paper)">Dr Nono Gaël Tanguy</h2>
         <blockquote class="founder__quote">« {{ founderQuote }} »</blockquote>
         <p class="founder__bio">
           Passionné par la diffusion du savoir et la promotion des auteurs, il a créé Les Éditions du Djembé d'Ébène avec la conviction que chaque voix mérite d'être entendue.
@@ -124,9 +109,9 @@ const marquee = [
     <!-- Mentions légales -->
     <section class="section section-paper">
       <div class="container-narrow">
-        <p class="eyebrow reveal">Mentions légales</p>
-        <h2 class="h2 reveal" style="margin-top:0.75rem">Éditeur & <em class="accent">propriété</em></h2>
-        <div class="legal reveal" style="margin-top:1.25rem">
+        <p class="eyebrow">Mentions légales</p>
+        <h2 class="h2" style="margin-top:0.75rem">Éditeur & propriété</h2>
+        <div class="legal" style="margin-top:1.25rem">
           <h3 class="protocol-h">Éditeur</h3>
           <p class="detail-prose">
             Les Éditions du Djembé d'Ébène
@@ -149,8 +134,8 @@ const marquee = [
 .about-history__text { display: grid; gap: 1rem; }
 .about-history__visual { aspect-ratio: 4/3; border-radius: var(--radius); background: linear-gradient(145deg, var(--paper-2), var(--ivory)); border: 1px solid var(--line); display: grid; place-items: center; color: var(--green); }
 .founder { text-align: center; display: grid; gap: 1rem; justify-items: center; }
-.founder__quote { margin: 1rem 0 0; padding: 1.25rem 1.75rem; border-left: 3px solid var(--gold); font-size: 1.2rem; font-style: italic; color: rgba(247, 243, 235, 0.9); text-align: left; max-width: 58ch; }
-.founder__bio { color: rgba(247, 243, 235, 0.7); max-width: 54ch; line-height: 1.65; }
+.founder__quote { margin: 1rem 0 0; padding: 1.25rem 1.75rem; border-left: 3px solid var(--gold); font-size: 1.2rem; font-style: italic; color: var(--paper); text-align: left; max-width: 58ch; }
+.founder__bio { color: var(--on-dark-2); max-width: 54ch; line-height: 1.65; }
 .legal { display: grid; gap: 0.5rem; }
 .protocol-h { font-weight: 700; font-size: 1.05rem; margin-top: 1.25rem; margin-bottom: 0.4rem; color: var(--ink-900); }
 @media (max-width: 760px) {

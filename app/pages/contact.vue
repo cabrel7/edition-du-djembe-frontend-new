@@ -1,4 +1,6 @@
 <script setup lang="ts">
+definePageMeta({ hero: 'light' })
+
 useHead({ title: 'Contact — Les Éditions du Djembé d’Ébène' })
 
 const contact = {
@@ -28,7 +30,7 @@ async function submit() {
   if (!validate()) return
   status.value = 'pending'
   try {
-    await $fetch(`${useRuntimeConfig().public.apiBase}/contacts`, {
+    await $fetch(apiUrl('/contacts'), {
       method: 'POST',
       body: { name: form.name, email: form.email, subject: form.subject, message: form.message },
     })
@@ -44,14 +46,13 @@ async function submit() {
   <main>
     <PageHero
       eyebrow="Contact"
-      title="Écrivons"
-      accent="ensemble"
+      title="Écrivons ensemble"
       lead="Une question, un projet, une collaboration ? Notre équipe est à votre écoute."
     />
 
     <section class="section section-paper">
       <div class="container contact-layout">
-        <aside class="contact-aside reveal">
+        <aside class="contact-aside">
           <p class="eyebrow">Nos coordonnées</p>
           <h2 class="h3" style="margin-top:0.5rem">Parlons de votre projet</h2>
           <div class="contact-coords" style="margin-top:1.5rem">
@@ -86,7 +87,7 @@ async function submit() {
           </div>
         </aside>
 
-        <form class="form-card reveal" style="--d:100ms" novalidate @submit.prevent="submit">
+        <form class="form-card" novalidate @submit.prevent="submit">
           <h2 class="form-card__title">Envoyez-nous un message</h2>
 
           <div v-if="status === 'ok'" class="form-status form-status--ok" role="status">

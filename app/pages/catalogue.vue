@@ -1,11 +1,13 @@
 <script setup lang="ts">
+definePageMeta({ hero: 'light' })
+
 import type { Book } from '~/types/api'
 
 const config = useRuntimeConfig()
 
 const { data, status } = await useAsyncData<{ books: Book[] }>(
   'catalog-books',
-  () => $fetch(`${config.public.apiBase}/data/book`),
+  () => $fetch(apiUrl('/data/book')),
   { server: true },
 )
 
@@ -24,14 +26,6 @@ const featuredPrice = featured.value?.price != null && Number(featured.value.pri
   ? `${Number(featured.value.price).toFixed(2)} €`
   : null
 
-const marquee = [
-  'Romans & essais',
-  'Poésie militante',
-  'Essais de recherche',
-  'Voix de la diaspora',
-  'Littérature engagée',
-  'Pensée critique',
-]
 
 useHead({ title: 'Catalogue — Les Éditions du Djembé d’Ébène' })
 </script>
@@ -40,32 +34,23 @@ useHead({ title: 'Catalogue — Les Éditions du Djembé d’Ébène' })
   <main>
     <PageHero
       eyebrow="Catalogue"
-      title="Explorez nos"
-      accent="collections"
+      title="Explorez nos collections"
       lead="Romans, essais et travaux de recherche — une diversité de genres et de disciplines, une même exigence éditoriale."
     />
-
-    <div class="mq" aria-hidden="true">
-      <div class="mq__track">
-        <template v-for="n in 2" :key="n">
-          <span v-for="m in marquee" :key="`${n}-${m}`" class="mq__item">{{ m }} <b>✦</b></span>
-        </template>
-      </div>
-    </div>
 
     <!-- À la une -->
     <section v-if="featured" class="section section-paper">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">À la une</p>
-          <h2 class="h2">Le titre du <em class="accent">moment</em></h2>
+          <h2 class="h2">Le titre du moment</h2>
         </div>
 
-        <NuxtLink :to="`/livres/${featured.slug || featured.id}`" class="featured reveal">
+        <NuxtLink :to="`/livres/${featured.slug || featured.id}`" class="featured">
           <div class="featured__cover">
             <img
               v-if="featuredCover && !featuredBroken" :src="featuredCover" :alt="`Couverture — ${featured.title}`"
-              width="400" height="600" @error="featuredBroken = true"
+              width="400" height="600" loading="lazy" decoding="async" @error="featuredBroken = true"
             >
             <div v-else class="book__placeholder" aria-hidden="true">
               <svg viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -91,12 +76,12 @@ useHead({ title: 'Catalogue — Les Éditions du Djembé d’Ébène' })
     <!-- Grille complète -->
     <section class="section">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">Tous les ouvrages</p>
-          <h2 class="h2">Le catalogue <em class="accent">complet</em></h2>
+          <h2 class="h2">Le catalogue complet</h2>
         </div>
 
-        <div class="toolbar reveal">
+        <div class="toolbar">
           <input
             v-model="query" type="search" placeholder="Rechercher un titre, un auteur…"
             class="toolbar__input" aria-label="Rechercher un ouvrage"
@@ -118,7 +103,7 @@ useHead({ title: 'Catalogue — Les Éditions du Djembé d’Ébène' })
 
         <template v-else>
           <div class="books-grid">
-            <BookCard v-for="(b, i) in visible" :key="b.id" :book="b" :delay="i % 4" />
+            <BookCard v-for="b in visible" :key="b.id" :book="b" />
           </div>
           <div v-if="hasMore" class="section-foot" style="justify-content:center">
             <button class="btn btn-dark" type="button" @click="loadMore()">Charger plus</button>
@@ -129,9 +114,9 @@ useHead({ title: 'Catalogue — Les Éditions du Djembé d’Ébène' })
 
     <!-- CTA -->
     <section class="section section-dark">
-      <div class="container-narrow cta reveal" style="text-align:center">
+      <div class="container-narrow cta" style="text-align:center">
         <h2 class="h2">Vous avez un manuscrit ?</h2>
-        <p class="lead" style="margin-inline:auto;color:rgba(247,243,235,0.75)">
+        <p class="lead" style="margin-inline:auto;color:var(--on-dark-2)">
           Notre comité de lecture examine chaque proposition. Faire résonner votre voix commence ici.
         </p>
         <NuxtLink to="/soumettre-mon-travail" class="btn btn-primary">Soumettre un manuscrit <AppIcon name="arrow-right" /></NuxtLink>
@@ -147,7 +132,7 @@ useHead({ title: 'Catalogue — Les Éditions du Djembé d’Ébène' })
   padding: 0.7rem 1.2rem; border: 1px solid var(--line); border-radius: 999px;
   background: var(--ivory); font: inherit; font-size: 0.95rem;
 }
-.toolbar__input:focus { outline: 2px solid var(--gold); outline-offset: 2px; border-color: transparent; }
+.toolbar__input:focus { outline: 2px solid var(--focus-ring); outline-offset: 2px; border-color: transparent; }
 .toolbar__count { font-size: 0.88rem; color: var(--muted); white-space: nowrap; }
 
 .featured {

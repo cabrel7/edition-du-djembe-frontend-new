@@ -1,11 +1,13 @@
 <script setup lang="ts">
+definePageMeta({ hero: 'light' })
+
 import type { Video } from '~/types/api'
 
 const config = useRuntimeConfig()
 
 const { data, status } = await useAsyncData<{ video: Video[] }>(
   'listing-videos',
-  () => $fetch(`${config.public.apiBase}/data/video`),
+  () => $fetch(apiUrl('/data/video')),
   { server: true },
 )
 
@@ -34,19 +36,18 @@ useHead({ title: 'Vidéos — Les Éditions du Djembé d’Ébène' })
   <main>
     <PageHero
       eyebrow="Vidéos"
-      title="La culture"
-      accent="en mouvement"
+      title="La culture en mouvement"
       lead="Entretiens, lectures et documentaires — les voix de la maison à l’image."
     />
 
     <section class="section">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">Regards & rencontres</p>
-          <h2 class="h2">Nos <em class="accent">vidéos</em></h2>
+          <h2 class="h2">Nos vidéos</h2>
         </div>
 
-        <div class="toolbar reveal">
+        <div class="toolbar">
           <input
             v-model="query" type="search" placeholder="Rechercher une vidéo…"
             class="toolbar__input" aria-label="Rechercher une vidéo"
@@ -69,13 +70,13 @@ useHead({ title: 'Vidéos — Les Éditions du Djembé d’Ébène' })
         <template v-else>
           <div class="videos-grid">
             <NuxtLink
-              v-for="(v, i) in visible" :key="v.id"
-              :to="`/videos/${v.slug || v.id}`" class="video-card reveal" :style="{ '--d': `${(i % 3) * 80}ms` }"
+              v-for="v in visible" :key="v.id"
+              :to="`/videos/${v.slug || v.id}`" class="video-card"
             >
               <div class="video-card__media">
                 <img
                   v-if="thumbOf(v)" :src="thumbOf(v)!" :alt="v.title"
-                  loading="lazy" width="640" height="360" @error="markBroken(v.id)"
+                  loading="lazy" decoding="async" width="640" height="360" @error="markBroken(v.id)"
                 >
                 <div v-else class="video-card__fallback" aria-hidden="true" />
                 <span class="video-card__play"><AppIcon name="play" :size="22" /></span>
@@ -95,6 +96,6 @@ useHead({ title: 'Vidéos — Les Éditions du Djembé d’Ébène' })
 <style scoped>
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: clamp(1.5rem, 2vw, 2.5rem); }
 .toolbar__input { flex: 1; min-width: 220px; min-height: 48px; padding: 0.7rem 1.2rem; border: 1px solid var(--line); border-radius: 999px; background: var(--ivory); font: inherit; font-size: 0.95rem; }
-.toolbar__input:focus { outline: 2px solid var(--gold); outline-offset: 2px; border-color: transparent; }
+.toolbar__input:focus { outline: 2px solid var(--focus-ring); outline-offset: 2px; border-color: transparent; }
 .toolbar__count { font-size: 0.88rem; color: var(--muted); white-space: nowrap; }
 </style>

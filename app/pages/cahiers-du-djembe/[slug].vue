@@ -1,4 +1,6 @@
 <script setup lang="ts">
+definePageMeta({ hero: 'light' })
+
 const route = useRoute()
 const config = useRuntimeConfig()
 const slug = computed(() => String(route.params.slug))
@@ -33,7 +35,7 @@ interface PressShow {
 
 const { data, error } = await useAsyncData<PressShow>(
   () => `press-${slug.value}`,
-  () => $fetch(`${config.public.apiBase}/press-reviews/${slug.value}`),
+  () => $fetch(apiUrl(`/press-reviews/${slug.value}`)),
   { server: true },
 )
 
@@ -45,6 +47,11 @@ const review = computed(() => data.value!.data.press_review)
 const suggestions = computed(() => data.value?.data.suggestions ?? [])
 
 const broken = ref(new Set<number>())
+const heroCover = computed(() => pressCover(review.value.cover_image))
+
+function pressCover(img: string | null | undefined) {
+  return coverUrl('press', img, config.public.apiBase)
+}
 
 function fmtDate(d: string | null) {
   if (!d) return ''
@@ -56,47 +63,48 @@ useSeoMeta({
   description: () => review.value.summary?.slice(0, 160) ?? review.value.content?.slice(0, 160) ?? undefined,
   ogTitle: () => review.value.title,
   ogDescription: () => review.value.summary?.slice(0, 160) ?? undefined,
-  ogImage: () => review.value.cover_image ?? undefined,
+  ogImage: () => pressCover(review.value.cover_image) ?? undefined,
 })
 </script>
 
 <template>
   <main>
-    <section class="press-hero">
-      <div class="press-hero__glow" aria-hidden="true" />
-      <div class="container-narrow" style="position:relative">
-        <p class="eyebrow reveal">
+    <section class="p-hero">
+      <div class="p-hero__glow" aria-hidden="true" />
+      <div class="container-narrow p-hero__inner">
+        <p class="eyebrow">
           <NuxtLink to="/cahiers-du-djembe" class="crumb">Les Cahiers du Djembé</NuxtLink>
           <template v-if="review.category"> · {{ review.category }}</template>
         </p>
-        <h1 class="press-hero__title reveal">{{ review.title }}</h1>
-        <p v-if="review.subtitle" class="press-hero__subtitle reveal">{{ review.subtitle }}</p>
+        <h1 class="p-hero__title">{{ review.title }}</h1>
+        <p v-if="review.subtitle" class="p-hero__subtitle">{{ review.subtitle }}</p>
 
-        <div class="detail-meta reveal">
+        <div class="detail-meta p-hero__meta">
           <span v-if="review.author">{{ review.author }}</span>
           <span v-if="review.source">{{ review.source }}</span>
           <time v-if="review.publication_date">{{ fmtDate(review.publication_date) }}</time>
           <span v-if="review.views">{{ review.views }} vues</span>
+        </div>
+
+        <div v-if="heroCover && !broken.has(review.id)" class="p-hero__img">
+          <img
+            :src="heroCover" :alt="review.title"
+            width="1200" height="630" loading="lazy" decoding="async"
+            @error="broken.add(review.id)"
+          >
         </div>
       </div>
     </section>
 
     <section class="section section-paper">
       <div class="container-narrow">
-        <div v-if="review.cover_image && !broken.has(review.id)" class="detail-hero-img reveal-img">
-          <img
-            :src="review.cover_image" :alt="review.title"
-            width="1200" height="630" @error="broken.add(review.id)"
-          >
-        </div>
+        <div class="detail-prose p-body">{{ review.content || review.summary }}</div>
 
-        <div class="detail-prose reveal" style="margin-top:1.75rem">{{ review.content || review.summary }}</div>
-
-        <div v-if="review.tags?.length" class="tag-row reveal">
+        <div v-if="review.tags?.length" class="tag-row">
           <span v-for="t in review.tags" :key="t" class="tag">{{ t }}</span>
         </div>
 
-        <div v-if="review.source_url" class="detail-actions reveal">
+        <div v-if="review.source_url" class="detail-actions">
           <a :href="review.source_url" class="btn btn-dark" target="_blank" rel="noopener noreferrer">
             Voir la source <AppIcon name="external" :size="14" />
           </a>
@@ -106,9 +114,9 @@ useSeoMeta({
 
     <section v-if="suggestions.length" class="section">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">Suite</p>
-          <h2 class="h2">À lire <em class="accent">également</em></h2>
+          <h2 class="h2">À lire également</h2>
         </div>
         <div class="news-grid">
           <NuxtLink
@@ -117,8 +125,8 @@ useSeoMeta({
           >
             <div class="press-card__media">
               <img
-                v-if="s.cover_image && !broken.has(s.id)" :src="s.cover_image" :alt="s.title"
-                loading="lazy" width="640" height="360" @error="broken.add(s.id)"
+                v-if="s.cover_image && pressCover(s.cover_image) && !broken.has(s.id)" :src="pressCover(s.cover_image)" :alt="s.title"
+                loading="lazy" decoding="async" width="640" height="360" @error="broken.add(s.id)"
               >
               <div v-else class="press-card__fallback" aria-hidden="true">
                 <AppIcon name="newspaper" :size="36" />
@@ -139,29 +147,31 @@ useSeoMeta({
 </template>
 
 <style scoped>
-.press-hero {
+.p-hero {
   position: relative;
-  padding-block: calc(var(--header-h) + clamp(2rem, 4vw, 4rem)) clamp(2rem, 3vw, 3.5rem);
-  background: var(--ink-900);
-  color: var(--paper);
+  padding-block: calc(var(--header-h) + clamp(2.5rem, 5vw, 4.5rem)) clamp(2rem, 3vw, 3rem);
+  background: linear-gradient(180deg, var(--paper-2) 0%, var(--paper) 100%);
+  border-bottom: 1px solid var(--line);
   overflow: hidden;
 }
-.press-hero__glow {
+.p-hero__glow {
   position: absolute;
   inset: -30% -10% auto;
   height: 110%;
   background:
-    radial-gradient(50% 55% at 75% 15%, rgba(232, 163, 76, 0.14), transparent 70%),
-    radial-gradient(40% 50% at 15% 55%, rgba(45, 106, 79, 0.18), transparent 70%);
+    radial-gradient(50% 55% at 75% 15%, color-mix(in srgb, var(--gold) 14%, transparent), transparent 70%),
+    radial-gradient(40% 50% at 15% 55%, color-mix(in srgb, var(--green) 9%, transparent), transparent 70%);
   pointer-events: none;
 }
-.press-hero__title { font-size: var(--step-4); color: #fff; line-height: 1.08; margin-top: 0.75rem; }
-.press-hero__subtitle { font-size: 1.15rem; color: rgba(247, 243, 235, 0.7); margin-top: 0.75rem; }
-.detail-meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-top: 1rem; font-size: 0.9rem; color: rgba(247, 243, 235, 0.6); }
+.p-hero__inner { position: relative; }
+.p-hero__title { font-size: var(--step-3); color: var(--ink-950); line-height: 1.08; margin-top: 0.75rem; text-wrap: balance; overflow-wrap: break-word; }
+.p-hero__subtitle { font-size: 1.15rem; color: var(--ink-2); margin-top: 0.75rem; }
+.p-hero__meta { margin-block: 1.25rem 0; }
 .crumb { color: inherit; }
-.crumb:hover { color: var(--gold); }
-.detail-hero-img { margin-top: 1.75rem; border-radius: var(--radius); overflow: hidden; aspect-ratio: 16/9; background: var(--paper-2); }
-.detail-hero-img img { width: 100%; height: 100%; object-fit: cover; }
+.crumb:hover { color: var(--gold-700); }
+.p-hero__img { margin-top: 1.5rem; border-radius: var(--radius); overflow: hidden; aspect-ratio: 16 / 9; background: var(--paper-2); box-shadow: var(--shadow); }
+.p-hero__img img { width: 100%; height: 100%; object-fit: cover; }
+.p-body { margin-top: 0; }
 .tag-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
 .tag { padding: 0.3rem 0.75rem; border-radius: 999px; border: 1px solid var(--line); font-size: 0.8rem; color: var(--muted); }
 </style>

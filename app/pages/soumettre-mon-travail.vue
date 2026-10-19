@@ -1,4 +1,6 @@
 <script setup lang="ts">
+definePageMeta({ hero: 'light' })
+
 useHead({ title: 'Soumettre un manuscrit — Les Éditions du Djembé d’Ébène' })
 
 const types = [
@@ -22,6 +24,53 @@ const fileInput = ref<HTMLInputElement | null>(null)
 const errors = reactive<Record<string, string>>({})
 const status = ref<'idle' | 'pending' | 'ok' | 'err'>('idle')
 const showProtocol = ref(false)
+const protocolDialog = ref<HTMLElement | null>(null)
+let protocolTrigger: HTMLElement | null = null
+
+function openProtocol(trigger: EventTarget | null) {
+  protocolTrigger = trigger instanceof HTMLElement ? trigger : null
+  showProtocol.value = true
+}
+
+function closeProtocol() {
+  showProtocol.value = false
+  protocolTrigger?.focus()
+  protocolTrigger = null
+}
+
+/** Esc ferme, Tab cycle dans le dialog (focus trap). */
+function onProtocolKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    closeProtocol()
+    return
+  }
+  if (event.key !== 'Tab' || !protocolDialog.value) return
+  const focusables = Array.from(
+    protocolDialog.value.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'),
+  ).filter(el => !el.hasAttribute('disabled'))
+  const first = focusables[0]
+  const last = focusables[focusables.length - 1]
+  if (!first || !last) return
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault()
+    last.focus()
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault()
+    first.focus()
+  }
+}
+
+watch(showProtocol, (open) => {
+  if (!import.meta.client) return
+  document.documentElement.style.overflow = open ? 'hidden' : ''
+  if (open) {
+    nextTick(() => protocolDialog.value?.querySelector<HTMLElement>('.modal__close')?.focus())
+  }
+})
+onBeforeUnmount(() => {
+  if (import.meta.client) document.documentElement.style.overflow = ''
+})
 
 function onFile(e: Event) {
   const input = e.target as HTMLInputElement
@@ -71,7 +120,7 @@ async function submit() {
     fd.append('rgpd_consent', '1')
     if (file.value) fd.append('file', file.value)
 
-    await $fetch(`${useRuntimeConfig().public.apiBase}/submissions`, {
+    await $fetch(apiUrl('/submissions'), {
       method: 'POST',
       body: fd,
     })
@@ -95,18 +144,17 @@ function reset() {
   <main>
     <PageHero
       eyebrow="Auteurs"
-      title="Faire écho"
-      accent="votre voix"
+      title="Faire écho votre voix"
       lead="Vous avez un manuscrit ou un article à nous proposer ? Remplissez le formulaire et notre comité de lecture l’examinera avec attention."
     >
-      <button class="btn btn-primary protocol-btn" type="button" @click="showProtocol = true">
+      <button class="btn btn-primary protocol-btn" type="button" @click="openProtocol($event.currentTarget)">
         Avis aux auteurs — protocole <AppIcon name="file-text" :size="16" />
       </button>
     </PageHero>
 
     <section class="section section-paper">
       <div class="container-narrow">
-        <div v-if="status === 'ok'" class="success-box reveal">
+        <div v-if="status === 'ok'" class="success-box">
           <span class="success-box__icon"><AppIcon name="check" :size="32" /></span>
           <h2 class="h2">Manuscrit envoyé avec succès !</h2>
           <p class="lead" style="margin-inline:auto">
@@ -197,12 +245,16 @@ function reset() {
     </section>
 
     <Teleport to="body">
-      <div v-if="showProtocol" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="protocol-title" @click.self="showProtocol = false">
+      <div
+        v-if="showProtocol" ref="protocolDialog" class="modal-backdrop"
+        role="dialog" aria-modal="true" aria-labelledby="protocol-title"
+        @click.self="closeProtocol" @keydown="onProtocolKeydown"
+      >
         <div class="modal">
           <header class="modal__head">
             <h2 id="protocol-title" class="modal__title">Protocole de présentation des manuscrits</h2>
-            <button class="modal__close" type="button" aria-label="Fermer" @click="showProtocol = false">
-              <AppIcon name="x" :size="22" />
+            <button class="modal__close" type="button" aria-label="Fermer le protocole" @click="closeProtocol">
+              <AppIcon name="x" :size="20" />
             </button>
           </header>
           <div class="modal__body">
@@ -287,7 +339,7 @@ function reset() {
             </p>
           </div>
           <footer class="modal__foot">
-            <button class="btn btn-primary" type="button" @click="showProtocol = false">J'ai compris</button>
+            <button class="btn btn-primary" type="button" @click="closeProtocol">J’ai compris</button>
           </footer>
         </div>
       </div>
@@ -309,22 +361,77 @@ fieldset.form-card { border: 1px solid var(--line); margin: 0; }
   cursor: pointer; color: var(--muted); text-align: center;
   transition: border-color 0.2s, background 0.2s;
 }
-.file-drop__label:hover { border-color: var(--green); background: rgba(45, 106, 79, 0.04); }
+.file-drop__label:hover { border-color: var(--green); background: color-mix(in srgb, var(--green) 4%, transparent); }
 .file-drop__name { font-weight: 600; color: var(--ink-900); font-size: 0.95rem; word-break: break-all; }
 .file-drop__hint { font-size: 0.88rem; line-height: 1.5; }
 .btn-block { width: 100%; justify-content: center; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 .success-box { display: grid; gap: 1.1rem; justify-items: center; text-align: center; padding: 2rem 0; }
-.success-box__icon { width: 64px; height: 64px; display: grid; place-items: center; border-radius: 50%; background: rgba(45, 106, 79, 0.12); color: var(--green); }
+.success-box__icon { width: 64px; height: 64px; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--green) 12%, transparent); color: var(--green); }
 
-.modal-backdrop { position: fixed; inset: 0; z-index: 100; background: rgba(20, 32, 26, 0.55); display: grid; place-items: center; padding: 1rem; overflow-y: auto; }
-.modal { width: min(100%, 820px); max-height: min(90vh, 900px); display: grid; grid-template-rows: auto 1fr auto; background: var(--ivory); border-radius: var(--radius); box-shadow: var(--shadow-lg); overflow: hidden; }
-.modal__head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--line); }
-.modal__title { font-size: 1.05rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
-.modal__close { background: none; border: 0; cursor: pointer; color: var(--muted); padding: 0.35rem; border-radius: 8px; }
-.modal__close:hover { background: var(--paper-2); color: var(--ink-900); }
-.modal__body { overflow-y: auto; padding: 1.25rem 1.5rem; }
-.modal__foot { display: flex; justify-content: flex-end; padding: 1rem 1.25rem; border-top: 1px solid var(--line); }
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: color-mix(in srgb, var(--ink-950) 62%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  display: grid;
+  place-items: start center;
+  padding: clamp(1rem, 4vw, 3rem) 1rem;
+  overflow-y: auto;
+  animation: modal-fade 0.2s ease-out;
+}
+.modal {
+  width: min(100%, 820px);
+  max-height: min(90vh, 900px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: modal-rise 0.28s var(--ease);
+}
+@keyframes modal-fade { from { opacity: 0; } }
+@keyframes modal-rise { from { opacity: 0; transform: translateY(14px); } }
+.modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem clamp(1.25rem, 3vw, 2rem);
+  border-bottom: 1px solid var(--line);
+}
+.modal__title {
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  font-weight: 600;
+  color: var(--ink-950);
+  line-height: 1.2;
+}
+.modal__close {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-2);
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.modal__close:hover { background: var(--paper-2); border-color: var(--ink-2); color: var(--ink-950); }
+.modal__body { overflow-y: auto; padding: clamp(1.25rem, 3vw, 2rem); }
+.modal__foot {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem clamp(1.25rem, 3vw, 2rem);
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
 .protocol-brand { text-align: center; font-style: italic; color: var(--muted); margin-bottom: 1rem; }
 .protocol-p { font-size: 0.92rem; color: var(--ink-2); line-height: 1.65; }
 .protocol-example { padding: 0.85rem 1rem; background: var(--paper-2); border-radius: 8px; font-size: 0.88rem; }

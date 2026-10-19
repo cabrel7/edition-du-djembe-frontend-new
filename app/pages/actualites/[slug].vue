@@ -1,4 +1,6 @@
 <script setup lang="ts">
+definePageMeta({ hero: 'light' })
+
 import type { Article } from '~/types/api'
 
 const route = useRoute()
@@ -7,7 +9,7 @@ const slug = computed(() => String(route.params.slug))
 
 const { data: article, error } = await useAsyncData<Article>(
   () => `article-${slug.value}`,
-  () => $fetch(`${config.public.apiBase}/articles/${slug.value}`),
+  () => $fetch(apiUrl(`/articles/${slug.value}`)),
   { server: true },
 )
 
@@ -35,15 +37,15 @@ useSeoMeta({
 
 <template>
   <main>
-    <section class="article-hero">
-      <div class="article-hero__glow" aria-hidden="true" />
-      <div class="container-narrow" style="position:relative">
-        <p class="eyebrow reveal">
+    <section class="a-hero">
+      <div class="a-hero__glow" aria-hidden="true" />
+      <div class="container-narrow a-hero__inner">
+        <p class="eyebrow">
           <NuxtLink to="/actualites" class="crumb">Actualités</NuxtLink>
         </p>
-        <h1 class="article-hero__title reveal">{{ article?.title }}</h1>
+        <h1 class="a-hero__title">{{ article?.title }}</h1>
 
-        <div class="detail-meta reveal">
+        <div class="detail-meta a-hero__meta">
           <span v-if="article?.published_date">{{ fmtDate(article.published_date) }}</span>
           <span v-if="article?.author">{{ article.author }}</span>
           <span v-if="article?.views_count">{{ article.views_count }} vues</span>
@@ -53,13 +55,17 @@ useSeoMeta({
 
     <section class="section section-paper">
       <div class="container-narrow">
-        <div v-if="image && !imageBroken" class="detail-hero-img reveal-img">
-          <img :src="image" :alt="article?.title" width="1200" height="630" @error="imageBroken = true">
+        <div v-if="image && !imageBroken" class="a-hero-img">
+          <img
+            :src="image" :alt="article?.title"
+            width="1200" height="630" loading="lazy" decoding="async"
+            @error="imageBroken = true"
+          >
         </div>
 
-        <div class="detail-prose reveal" style="margin-top:1.75rem">{{ article?.content }}</div>
+        <div class="detail-prose a-body">{{ article?.content }}</div>
 
-        <div v-if="article?.tags?.length" class="tag-row reveal">
+        <div v-if="article?.tags?.length" class="tag-row">
           <span v-for="t in article.tags" :key="t" class="tag">{{ t }}</span>
         </div>
       </div>
@@ -68,28 +74,30 @@ useSeoMeta({
 </template>
 
 <style scoped>
-.article-hero {
+.a-hero {
   position: relative;
-  padding-block: calc(var(--header-h) + clamp(2rem, 4vw, 4rem)) clamp(2rem, 3vw, 3.5rem);
-  background: var(--ink-900);
-  color: var(--paper);
+  padding-block: calc(var(--header-h) + clamp(2.5rem, 5vw, 4.5rem)) clamp(2rem, 3vw, 3rem);
+  background: linear-gradient(180deg, var(--paper-2) 0%, var(--paper) 100%);
+  border-bottom: 1px solid var(--line);
   overflow: hidden;
 }
-.article-hero__glow {
+.a-hero__glow {
   position: absolute;
   inset: -30% -10% auto;
   height: 110%;
   background:
-    radial-gradient(50% 55% at 75% 15%, rgba(232, 163, 76, 0.14), transparent 70%),
-    radial-gradient(40% 50% at 15% 55%, rgba(45, 106, 79, 0.18), transparent 70%);
+    radial-gradient(50% 55% at 75% 15%, color-mix(in srgb, var(--gold) 14%, transparent), transparent 70%),
+    radial-gradient(40% 50% at 15% 55%, color-mix(in srgb, var(--green) 9%, transparent), transparent 70%);
   pointer-events: none;
 }
-.article-hero__title { font-size: var(--step-4); color: #fff; line-height: 1.08; margin-top: 0.75rem; }
-.detail-meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-top: 1rem; font-size: 0.9rem; color: rgba(247, 243, 235, 0.6); }
+.a-hero__inner { position: relative; }
+.a-hero__title { font-size: var(--step-3); color: var(--ink-950); line-height: 1.08; margin-top: 0.75rem; text-wrap: balance; overflow-wrap: break-word; }
+.a-hero__meta { margin-block: 1.25rem 0; }
 .crumb { color: inherit; }
-.crumb:hover { color: var(--gold); }
-.detail-hero-img { margin-top: 1.75rem; border-radius: var(--radius); overflow: hidden; aspect-ratio: 16/9; background: var(--paper-2); }
-.detail-hero-img img { width: 100%; height: 100%; object-fit: cover; }
+.crumb:hover { color: var(--gold-700); }
+.a-hero-img { border-radius: var(--radius); overflow: hidden; aspect-ratio: 16 / 9; background: var(--paper-2); box-shadow: var(--shadow); }
+.a-hero-img img { width: 100%; height: 100%; object-fit: cover; }
+.a-body { margin-top: 1.75rem; }
 .tag-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
 .tag { padding: 0.3rem 0.75rem; border-radius: 999px; border: 1px solid var(--line); font-size: 0.8rem; color: var(--muted); }
 </style>

@@ -7,6 +7,7 @@ export default defineNuxtConfig({
 
   css: [
     '@fontsource-variable/inter/index.css',
+    '@fontsource-variable/fraunces/index.css',
     '~/assets/css/main.css',
   ],
 
@@ -15,7 +16,8 @@ export default defineNuxtConfig({
       htmlAttrs: { lang: 'fr' },
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
-        { name: 'theme-color', content: '#fdfaf4' },
+        // meta : les méta HTML ne peuvent pas utiliser var() — littéral = --paper
+        { name: 'theme-color', content: '#FAF7F2' },
         { name: 'format-detection', content: 'telephone=no' },
       ],
     },

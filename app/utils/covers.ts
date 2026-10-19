@@ -13,7 +13,7 @@ function apiOrigin(origin?: string): string {
 }
 
 export function coverUrl(
-  kind: 'book' | 'article' | 'memoir' | 'video',
+  kind: 'book' | 'article' | 'memoir' | 'video' | 'press',
   filename: string | null | undefined,
   origin?: string,
 ): string | null {
@@ -24,6 +24,7 @@ export function coverUrl(
     article: 'articles',
     memoir: 'memoirs/covers',
     video: 'video',
+    press: 'press-reviews/covers',
   }
   // Les anciennes lignes stockent un chemin déjà préfixé (books/covers/xxx.jpg) ;
   // les plus récentes un simple nom de fichier.
@@ -37,5 +38,12 @@ export function videoEmbedUrl(url: string): string | null {
   if (yt) return `https://www.youtube-nocookie.com/embed/${yt[1]}`
   const vimeo = url.match(/vimeo\.com\/(\d+)/)
   if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`
+  return null
+}
+
+/** Nom de la plateforme hébergeant la vidéo, ou null si non reconnue. */
+export function videoPlatform(url: string): string | null {
+  if (/(?:youtube\.com|youtu\.be)/.test(url)) return 'YouTube'
+  if (/vimeo\.com/.test(url)) return 'Vimeo'
   return null
 }

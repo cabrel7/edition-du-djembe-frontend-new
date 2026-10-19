@@ -5,19 +5,43 @@ const config = useRuntimeConfig()
 
 const { data: boot, status: bootStatus, error: bootError, refresh: refreshBoot } = await useAsyncData<BootData>(
   'boot',
-  () => $fetch(`${config.public.apiBase}/data/null`),
+  () => $fetch(apiUrl('/data/null')),
   { server: true },
 )
 
 const { data: press, status: pressStatus } = await useAsyncData<{ data?: { press_reviews?: PressReview[] } }>(
   'press-home',
-  () => $fetch(`${config.public.apiBase}/press-reviews`, { query: { per_page: 3 } }),
+  () => $fetch(apiUrl('/press-reviews'), { query: { per_page: 3 } }),
   { server: true },
 )
 
 const featuredBook = computed<Book | null>(() => boot.value?.books?.[0] ?? null)
 const books = computed<Book[]>(() => boot.value?.books?.slice(1, 5) ?? [])
 const memoirs = computed<Memoir[]>(() => boot.value?.memoirs?.slice(0, 4) ?? [])
+
+// /data/null n'expose pas `cover` (colonne hors liste publique côté API) ;
+// /getbasedata livre les 3 derniers mémoires avec leur couverture → pont par id.
+const { data: coverBoot } = await useAsyncData<{ lastmemoirs?: { id: number; cover: string | null }[] }>(
+  'memoir-covers',
+  () => $fetch(apiUrl('/getbasedata')),
+  { server: true },
+)
+const brokenCovers = ref(new Set<number>())
+const bridgeCovers = computed(() => {
+  const map = new Map<number, string>()
+  for (const item of coverBoot.value?.lastmemoirs ?? []) {
+    const url = coverUrl('memoir', item.cover)
+    if (url) map.set(item.id, url)
+  }
+  return map
+})
+function memoirCover(m: Memoir): string | null {
+  if (m.cover) return coverUrl('memoir', m.cover)
+  return bridgeCovers.value.get(m.id) ?? null
+}
+function markCoverBroken(id: number) {
+  brokenCovers.value.add(id)
+}
 const videos = computed<Video[]>(() => boot.value?.video?.slice(0, 6) ?? [])
 const categories = computed(() => boot.value?.categories ?? [])
 const pressReviews = computed<PressReview[]>(() => press.value?.data?.press_reviews?.slice(0, 3) ?? [])
@@ -29,19 +53,15 @@ function markThumbBroken(id: number) {
 
 const featuredCover = computed(() => coverUrl('book', featuredBook.value?.cover))
 const featuredCoverBroken = ref(false)
+
+function pressCover(img: string | null | undefined) {
+  return coverUrl('press', img, config.public.apiBase)
+}
+
 const featuredPrice = computed(() => {
   const p = featuredBook.value?.price
   return p != null && Number(p) > 0 ? `${Number(p).toFixed(2)} €` : null
 })
-
-const marquee = [
-  'Les Cahiers du Djembé',
-  'Romans & essais',
-  'Mémoires de recherche',
-  'Voix contemporaines',
-  'Soumission ouverte',
-  'Littérature & recherche',
-]
 
 function domainLabel(m: Memoir): string {
   const d: Record<string, string> = {
@@ -77,7 +97,7 @@ useHead({
         <div class="hero__content">
           <h1 class="hero__title">
             <span class="hero__line"><span>Faire résonner</span></span>
-            <span class="hero__line"><span class="accent">l’invisible</span></span>
+            <span class="hero__line"><span>l’invisible</span></span>
           </h1>
           <p class="lead hero__fade hero__lead">
             Votre partenaire de confiance pour la publication et la diffusion
@@ -102,7 +122,7 @@ useHead({
           <div class="hero-plate__cover">
             <img
               v-if="featuredCover && !featuredCoverBroken" :src="featuredCover" :alt="`Couverture — ${featuredBook.title}`"
-              width="400" height="600"
+              width="400" height="600" loading="eager" fetchpriority="high" decoding="async"
               @error="featuredCoverBroken = true"
             >
             <div v-else class="book__placeholder" aria-hidden="true">
@@ -118,30 +138,19 @@ useHead({
             <h2 class="hero-plate__title">{{ featuredBook.title }}</h2>
             <p class="hero-plate__author">
               {{ featuredBook.author }}
-              <template v-if="featuredPrice"> · <span class="accent">{{ featuredPrice }}</span></template>
+              <template v-if="featuredPrice"> · <span class="hero-plate__price">{{ featuredPrice }}</span></template>
             </p>
           </div>
         </NuxtLink>
       </div>
     </section>
 
-    <!-- ============ BANDEAU DÉFILANT ============ -->
-    <div class="mq" aria-hidden="true">
-      <div class="mq__track">
-        <template v-for="n in 2" :key="n">
-          <span v-for="m in marquee" :key="`${n}-${m}`" class="mq__item">
-            {{ m }} <AppIcon name="star" :size="12" />
-          </span>
-        </template>
-      </div>
-    </div>
-
     <!-- ============ NOUVELLES PUBLICATIONS ============ -->
     <section class="section">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">Nouvelles publications</p>
-          <h2 class="h2">Des voix qui <em class="accent">traversent</em></h2>
+          <h2 class="h2">Des voix qui traversent</h2>
           <p class="lead">Les derniers titres du catalogue — romans, essais et recherches.</p>
         </div>
 
@@ -165,9 +174,9 @@ useHead({
 
         <template v-else>
           <div class="books-grid">
-            <BookCard v-for="(b, i) in books" :key="b.id" :book="b" :delay="i" />
+            <BookCard v-for="b in books" :key="b.id" :book="b" />
           </div>
-          <div class="section-foot reveal">
+          <div class="section-foot">
             <NuxtLink to="/catalogue" class="link-arrow">Voir tout le catalogue <AppIcon name="arrow-right" :size="16" /></NuxtLink>
           </div>
         </template>
@@ -177,13 +186,13 @@ useHead({
     <!-- ============ COLLECTIONS — index ============ -->
     <section class="section section-warm">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">Nos collections</p>
-          <h2 class="h2">Un catalogue <em class="accent">pluriel</em></h2>
+          <h2 class="h2">Un catalogue pluriel</h2>
           <p class="lead">De la fiction au document de recherche, chaque collection a son rythme et sa exigence.</p>
         </div>
 
-        <ul v-if="categories.length" class="index-list reveal">
+        <ul v-if="categories.length" class="index-list">
           <li v-for="(c, i) in categories.slice(0, 6)" :key="c.id" class="index-list__item">
             <NuxtLink to="/catalogue" class="index-list__link">
               <span class="index-list__num">{{ String(i + 1).padStart(2, '0') }}</span>
@@ -201,7 +210,7 @@ useHead({
     <!-- ============ CAHIERS DU DJEMBÉ ============ -->
     <section class="section section-dark">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">Les Cahiers du Djembé</p>
           <h2 class="h2">La revue de presse et d’idées</h2>
           <p class="lead">Entretiens, critiques et reportages — le regard de la maison sur les scènes culturelles.</p>
@@ -213,13 +222,13 @@ useHead({
 
         <div v-else-if="pressReviews.length" class="cahiers-grid">
           <NuxtLink
-            v-for="(pr, i) in pressReviews" :key="pr.id"
-            :to="`/cahiers-du-djembe/${pr.slug}`" class="cahier-card reveal" :style="{ '--d': `${i * 80}ms` }"
+            v-for="pr in pressReviews" :key="pr.id"
+            :to="`/cahiers-du-djembe/${pr.slug}`" class="cahier-card"
           >
             <div class="cahier-card__media">
               <img
-                v-if="pr.cover_image && !brokenThumbs.has(pr.id)" :src="pr.cover_image" :alt="pr.title"
-                loading="lazy" width="640" height="480"
+                v-if="pr.cover_image && pressCover(pr.cover_image) && !brokenThumbs.has(pr.id)" :src="pressCover(pr.cover_image)" :alt="pr.title"
+                loading="lazy" decoding="async" width="640" height="480"
                 @error="markThumbBroken(pr.id)"
               >
               <div v-else class="cahier-card__fallback" aria-hidden="true">
@@ -234,12 +243,12 @@ useHead({
           </NuxtLink>
         </div>
 
-        <div v-else class="issue-teaser reveal">
+        <div v-else class="issue-teaser">
           <span class="issue-teaser__num" aria-hidden="true">N°&nbsp;01</span>
           <p>Le prochain numéro se prépare — entretiens, critiques et reportages à paraître.</p>
         </div>
 
-        <div class="section-foot reveal">
+        <div class="section-foot">
           <NuxtLink to="/cahiers-du-djembe" class="link-arrow">Tous les cahiers <AppIcon name="arrow-right" :size="16" /></NuxtLink>
         </div>
       </div>
@@ -248,17 +257,26 @@ useHead({
     <!-- ============ MÉMOIRES ============ -->
     <section class="section section-paper">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">Mémoires de recherche</p>
-          <h2 class="h2">Le savoir <em class="accent">en partage</em></h2>
+          <h2 class="h2">Le savoir en partage</h2>
           <p class="lead">Mémoires et thèses issus des universités partenaires — consultation et téléchargement.</p>
         </div>
 
         <div v-if="memoirs.length" class="memoirs-grid">
           <NuxtLink
             v-for="(m, i) in memoirs" :key="m.id"
-            :to="`/memoires/${m.slug || m.id}`" class="memoir-card reveal" :style="{ '--d': `${i * 80}ms` }"
+            :to="`/memoires/${m.slug || m.id}`" class="memoir-card"
           >
+            <div
+              v-if="memoirCover(m) && !brokenCovers.has(m.id)"
+              class="memoir-card__cover"
+            >
+              <img
+                :src="memoirCover(m) || undefined" :alt="`Couverture — ${m.title}`"
+                width="480" height="300" loading="lazy" decoding="async" @error="markCoverBroken(m.id)"
+              >
+            </div>
             <div class="memoir-card__top">
               <span class="memoir-card__num">{{ String(i + 1).padStart(2, '0') }}</span>
               <span class="chip chip--line">{{ domainLabel(m) }}</span>
@@ -277,7 +295,7 @@ useHead({
           <p>Aucun mémoire publié pour l’instant.</p>
         </div>
 
-        <div class="section-foot reveal">
+        <div class="section-foot">
           <NuxtLink to="/memoires" class="link-arrow">Tous les mémoires <AppIcon name="arrow-right" :size="16" /></NuxtLink>
         </div>
       </div>
@@ -286,21 +304,21 @@ useHead({
     <!-- ============ VIDÉOS ============ -->
     <section class="section">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head">
           <p class="eyebrow">Vidéos</p>
-          <h2 class="h2">La culture en <em class="accent">mouvement</em></h2>
+          <h2 class="h2">La culture en mouvement</h2>
           <p class="lead">Entretiens, lectures et documentaires — les voix de la maison à l’image.</p>
         </div>
 
         <div v-if="videos.length" class="videos-grid">
           <NuxtLink
-            v-for="(v, i) in videos" :key="v.id"
-            :to="`/videos/${v.slug || v.id}`" class="video-card reveal" :style="{ '--d': `${i * 80}ms` }"
+            v-for="v in videos" :key="v.id"
+            :to="`/videos/${v.slug || v.id}`" class="video-card"
           >
             <div class="video-card__media">
               <img
                 v-if="v.thumbnail && coverUrl('video', v.thumbnail) && !brokenThumbs.has(v.id)" :src="coverUrl('video', v.thumbnail)" :alt="v.title"
-                loading="lazy" width="640" height="360"
+                loading="lazy" decoding="async" width="640" height="360"
                 @error="markThumbBroken(v.id)"
               >
               <div v-else class="video-card__fallback" aria-hidden="true" />
@@ -313,7 +331,7 @@ useHead({
           <p>Aucune vidéo pour l’instant.</p>
         </div>
 
-        <div class="section-foot reveal">
+        <div class="section-foot">
           <NuxtLink to="/videos" class="link-arrow">Toutes les vidéos <AppIcon name="arrow-right" :size="16" /></NuxtLink>
         </div>
       </div>
@@ -322,9 +340,9 @@ useHead({
     <!-- ============ MANIFESTE ============ -->
     <section class="section section-paper">
       <div class="container manifesto">
-        <div class="manifesto__text reveal">
+        <div class="manifesto__text">
           <p class="eyebrow">La maison</p>
-          <h2 class="h2">Chaque voix mérite <em class="accent">d’être entendue</em></h2>
+          <h2 class="h2">Chaque voix mérite d’être entendue</h2>
           <p class="lead">
             Les Éditions du Djembé publient des romans, des essais et des recherches
             dont la valeur dépasse les frontières. Nous accompagnons les auteurs de la
@@ -357,15 +375,15 @@ useHead({
 .hero__scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(26, 31, 27, 0.45) 0%, rgba(26, 31, 27, 0.25) 50%, rgba(26, 31, 27, 0.55) 100%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ink-950) 45%, transparent) 0%, color-mix(in srgb, var(--ink-950) 25%, transparent) 50%, color-mix(in srgb, var(--ink-950) 55%, transparent) 100%);
 }
 .hero__glow {
   position: absolute;
   inset: -20% -10% auto;
   height: 90%;
   background:
-    radial-gradient(55% 60% at 70% 20%, rgba(232, 163, 76, 0.15), transparent 70%),
-    radial-gradient(40% 50% at 20% 60%, rgba(45, 106, 79, 0.2), transparent 70%);
+    radial-gradient(55% 60% at 70% 20%, color-mix(in srgb, var(--gold) 10%, transparent), transparent 70%),
+    radial-gradient(40% 50% at 20% 60%, color-mix(in srgb, var(--green) 14%, transparent), transparent 70%);
   pointer-events: none;
 }
 .hero__layout {
@@ -376,11 +394,11 @@ useHead({
   align-items: center;
 }
 .hero__content { display: grid; gap: 1.4rem; }
-.hero__title { font-size: var(--step-5); color: #fff; }
+.hero__title { font-size: var(--step-5); color: var(--paper); }
 .hero__line { display: block; overflow: hidden; }
 .hero__line > span { display: inline-block; animation: heroUp 1.1s var(--ease) both; }
 .hero__line:nth-child(2) > span { animation-delay: 0.12s; }
-.hero__lead { max-width: 52ch; color: rgba(255, 255, 255, 0.88); }
+.hero__lead { max-width: 52ch; color: var(--paper); }
 .hero__ctas { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 0.6rem; }
 .hero__fade { animation: fadeUp 1s var(--ease) 0.4s both; }
 
@@ -391,9 +409,9 @@ useHead({
   gap: 0.9rem;
   justify-items: start;
   padding: 1.4rem;
-  border: 1px solid rgba(232, 163, 76, 0.3);
+  border: 1px solid color-mix(in srgb, var(--gold) 30%, transparent);
   border-radius: var(--radius);
-  background: rgba(26, 31, 27, 0.6);
+  background: color-mix(in srgb, var(--ink-950) 60%, transparent);
   backdrop-filter: blur(6px);
   color: var(--paper);
   transition: border-color 0.25s, transform 0.35s var(--ease);
@@ -404,7 +422,7 @@ useHead({
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--gold-300);
 }
 .hero-plate__cover {
   width: min(100%, 190px);
@@ -418,7 +436,8 @@ useHead({
 .hero-plate__cover .book__placeholder { background: linear-gradient(145deg, var(--ink-800), var(--ink-700)); color: var(--paper); }
 .hero-plate__cover .book__placeholder svg { opacity: 0.25; }
 .hero-plate__title { font-weight: 600; font-size: 1.1rem; line-height: 1.3; }
-.hero-plate__author { font-size: 0.85rem; color: rgba(247, 243, 235, 0.6); }
+.hero-plate__author { font-size: 0.85rem; color: var(--on-dark-3); }
+.hero-plate__price { font-weight: 600; color: var(--gold-300); }
 
 @media (max-width: 900px) {
   .hero__layout { grid-template-columns: 1fr; }
