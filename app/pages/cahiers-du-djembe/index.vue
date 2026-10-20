@@ -81,7 +81,7 @@ usePageSeo({
         </div>
 
         <div v-if="status === 'pending'" class="cahiers-grid" aria-busy="true">
-          <div v-for="i in 3" :key="i" class="skeleton" style="aspect-ratio:4/3;border-radius:var(--radius)" />
+          <div v-for="i in 3" :key="i" class="skeleton" style="height:376px;border-radius:var(--radius)" />
         </div>
 
         <div v-else-if="!filtered.length" class="state-box" style="color:var(--on-dark-3)">
@@ -103,9 +103,9 @@ usePageSeo({
               <div v-else class="cahier-card__fallback" aria-hidden="true">
                 <AppIcon name="newspaper" :size="40" />
               </div>
+              <span class="chip chip--line">{{ r.category }}</span>
             </div>
             <div class="cahier-card__body">
-              <span class="chip chip--line">{{ r.category }}</span>
               <h3 class="cahier-card__title">{{ r.title }}</h3>
               <p v-if="r.summary" class="cahier-card__summary">{{ r.summary }}</p>
             </div>

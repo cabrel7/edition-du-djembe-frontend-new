@@ -216,7 +216,7 @@ usePageSeo({
         </div>
 
         <div v-if="pressStatus === 'pending'" class="cahiers-grid" aria-busy="true">
-          <div v-for="i in 3" :key="i" class="skeleton" style="aspect-ratio:4/3;border-radius:var(--radius)" />
+          <div v-for="i in 3" :key="i" class="skeleton" style="height:376px;border-radius:var(--radius)" />
         </div>
 
         <div v-else-if="pressReviews.length" class="cahiers-grid">
@@ -235,9 +235,9 @@ usePageSeo({
               <div v-else class="cahier-card__fallback" aria-hidden="true">
                 <AppIcon name="newspaper" :size="40" />
               </div>
+              <span class="chip chip--line">{{ pr.category }}</span>
             </div>
             <div class="cahier-card__body">
-              <span class="chip chip--line">{{ pr.category }}</span>
               <h3 class="cahier-card__title">{{ pr.title }}</h3>
               <p v-if="pr.summary" class="cahier-card__summary">{{ pr.summary }}</p>
             </div>
@@ -430,8 +430,8 @@ usePageSeo({
   color: var(--gold-300);
 }
 .hero-plate__cover {
-  width: min(100%, 190px);
-  aspect-ratio: 2 / 3;
+  width: 100%;
+  aspect-ratio: 3 / 4;
   border-radius: 4px 10px 10px 4px;
   overflow: hidden;
   background: var(--ink-800);

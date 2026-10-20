@@ -21,8 +21,8 @@
 export const BOOK_SIZES = '540:45vw,541:30vw,901:22vw,1320:290px'
 export const VIDEO_SIZES = '900:46vw,901:31vw,1320:400px'
 export const GRID3_SIZES = '540:92vw,541:46vw,901:31vw,1320:400px'
-/** Plaque du hero : largeur fixe 190px (masquée <= 900px). */
-export const HOME_FEATURED_SIZES = '2000:190px'
+/** Plaque du hero : cover en pleine largeur de la plaque — ~210px à 901vw, ~330px >=1320 (masquée <= 900px). */
+export const HOME_FEATURED_SIZES = '901:210px,1320:330px'
 /** Couverture « à la une » du catalogue : 260px en colonne, 200px empilée <= 759px. */
 export const CATALOGUE_FEATURED_SIZES = '1:200px,760:260px'
 /** Article à la une : pleine largeur empilée <= 859px, ~656px en colonne 1.3fr. */

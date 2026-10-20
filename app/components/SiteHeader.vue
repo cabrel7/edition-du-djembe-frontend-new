@@ -52,7 +52,7 @@ watch(open, (v) => {
   >
     <div class="hdr__bar container">
       <NuxtLink to="/" class="hdr__logo" aria-label="Les Éditions du Djembé d’Ébène — accueil">
-        <img src="/logo.png" alt="" width="40" height="40" loading="eager" fetchpriority="high">
+        <img src="/logo.png" alt="" width="48" height="48" loading="eager" fetchpriority="high">
         <span class="hdr__word">Les Éditions<br>du Djembé d’Ébène</span>
       </NuxtLink>
 
@@ -138,7 +138,7 @@ watch(open, (v) => {
 }
 
 .hdr__logo { display: flex; align-items: center; gap: 0.6rem; color: inherit; }
-.hdr__logo img { width: 38px; height: 38px; filter: drop-shadow(0 4px 10px color-mix(in srgb, var(--black) 18%, transparent)); }
+.hdr__logo img { width: 48px; height: 48px; filter: drop-shadow(0 4px 10px color-mix(in srgb, var(--black) 18%, transparent)); }
 .hdr__word { font-size: 0.95rem; letter-spacing: -0.01em; line-height: 1.15; white-space: nowrap; }
 
 .hdr__nav { display: none; gap: 0.25rem; }
