@@ -152,7 +152,7 @@ function reset() {
       lead="Vous avez un manuscrit ou un article à nous proposer ? Remplissez le formulaire et notre comité de lecture l’examinera avec attention."
     >
       <button class="btn btn-primary protocol-btn" type="button" @click="openProtocol($event.currentTarget)">
-        Avis aux auteurs — protocole <AppIcon name="file-text" :size="16" />
+        Avis aux auteurs : protocole <AppIcon name="file-text" :size="16" />
       </button>
     </PageHero>
 

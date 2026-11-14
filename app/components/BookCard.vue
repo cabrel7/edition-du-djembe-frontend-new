@@ -13,7 +13,7 @@ const coverBroken = ref(false)
   <NuxtLink :to="`/livres/${book.slug || book.id}`" class="book">
     <div class="book__cover">
       <NuxtImg
-        v-if="cover && !coverBroken" :src="cover" :alt="`Couverture — ${book.title}`"
+        v-if="cover && !coverBroken" :src="cover" :alt="`Couverture : ${book.title}`"
         preset="cover" width="400" height="600" :sizes="BOOK_SIZES"
         loading="lazy" decoding="async"
         style="width:100%;height:100%;object-fit:cover"

@@ -89,6 +89,16 @@ async function submit() {
               </div>
             </div>
           </div>
+          <div class="contact-social">
+            <p class="contact-coord__label">Suivez-nous</p>
+            <ul class="contact-social__list">
+              <li v-for="s in SOCIAL_LINKS" :key="s.name">
+                <a :href="s.href" target="_blank" rel="noopener noreferrer" :aria-label="s.label">
+                  <AppIcon :name="s.icon" :size="20" />
+                </a>
+              </li>
+            </ul>
+          </div>
         </aside>
 
         <form class="form-card" novalidate @submit.prevent="submit">
@@ -137,6 +147,14 @@ async function submit() {
 </template>
 
 <style scoped>
+.contact-social { margin-top: 1.5rem; display: grid; gap: 0.6rem; }
+.contact-social__list { list-style: none; margin: 0; padding: 0; display: flex; gap: 0.6rem; }
+.contact-social__list a {
+  display: grid; place-items: center; width: 2.5rem; height: 2.5rem;
+  border-radius: var(--radius); border: 1px solid var(--line); color: var(--green);
+  transition: background 0.2s, color 0.2s;
+}
+.contact-social__list a:hover, .contact-social__list a:focus-visible { background: var(--green); color: var(--paper); }
 .contact-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: clamp(1.75rem, 4vw, 3.5rem); align-items: start; }
 .contact-aside { display: grid; gap: 0.5rem; }
 @media (max-width: 860px) {

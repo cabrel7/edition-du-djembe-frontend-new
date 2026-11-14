@@ -16,7 +16,7 @@ export default defineNuxtConfig({
       htmlAttrs: { lang: 'fr' },
       // Suffisé par le template : les pages ne déclarent plus la marque dans leur titre.
       title: 'Les Éditions du Djembé d’Ébène',
-      titleTemplate: '%s — Les Éditions du Djembé d’Ébène',
+      titleTemplate: '%s | Les Éditions du Djembé d’Ébène',
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
         // meta : les méta HTML ne peuvent pas utiliser var() — littéral = --paper

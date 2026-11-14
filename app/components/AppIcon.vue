@@ -33,6 +33,9 @@ const paths: Record<string, string> = {
   hash: 'M9 4 7 20m10-16-2 16M4.5 9h15m-15 6h15',
   'file-check': 'M7 3h7l5 5v13H7V3Zm7 0v5h5m-8 7 2 2 4-4',
   building: 'M4 21V5l8-2v18m0-12h8v12M8 8h.01M8 12h.01M8 16h.01M14 13h.01M14 17h.01',
+  facebook: 'M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3V2Z',
+  linkedin: 'M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6ZM2 9h4v12H2V9Zm2-3a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z',
+  instagram: 'M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm9 9.4a4 4 0 1 1-7.9 1.2 4 4 0 0 1 7.9-1.2ZM17.5 6.5h.01',
   quote: 'M9 8c-2.5 0-4 2-4 4.5S6.5 17 9 17c0 2-1 3-3 4m11-13c-2.5 0-4 2-4 4.5S17.5 17 20 17c0 2-1 3-3 4',
 }
 

@@ -84,7 +84,7 @@ useJsonLd('ld-book', computed(() => {
       <div class="container page-book__grid">
         <div class="page-book__cover">
           <img
-            v-if="cover && !coverBroken" :src="cover" :alt="`Couverture — ${book?.title}`"
+            v-if="cover && !coverBroken" :src="cover" :alt="`Couverture : ${book?.title}`"
             width="480" height="720" loading="eager" fetchpriority="high" decoding="async"
             @error="coverBroken = true"
           >

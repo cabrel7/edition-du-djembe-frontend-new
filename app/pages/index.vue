@@ -119,7 +119,7 @@ usePageSeo({
           <span class="hero-plate__tag">À la une</span>
           <div class="hero-plate__cover">
             <NuxtImg
-              v-if="featuredCover && !featuredCoverBroken" :src="featuredCover" :alt="`Couverture — ${featuredBook.title}`"
+              v-if="featuredCover && !featuredCoverBroken" :src="featuredCover" :alt="`Couverture : ${featuredBook.title}`"
               preset="cover" width="400" height="600" :sizes="HOME_FEATURED_SIZES"
               loading="eager" fetchpriority="high" decoding="async"
               @error="featuredCoverBroken = true"
@@ -150,7 +150,7 @@ usePageSeo({
         <div class="section-head">
           <p class="eyebrow">Nouvelles publications</p>
           <h2 class="h2">Des voix qui traversent</h2>
-          <p class="lead">Les derniers titres du catalogue — romans, essais et recherches.</p>
+          <p class="lead">Les derniers titres du catalogue : romans, essais et recherches.</p>
         </div>
 
         <div v-if="bootStatus === 'pending'" class="books-grid" aria-busy="true">
@@ -167,7 +167,7 @@ usePageSeo({
         </div>
 
         <div v-else-if="!featuredBook" class="state-box">
-          <p>Aucun titre publié pour l’instant — revenez bientôt.</p>
+          <p>Aucun titre publié pour l’instant, revenez bientôt.</p>
           <NuxtLink to="/soumettre-mon-travail" class="btn btn-primary">Soumettre un manuscrit</NuxtLink>
         </div>
 
@@ -212,7 +212,7 @@ usePageSeo({
         <div class="section-head">
           <p class="eyebrow">Les Cahiers du Djembé</p>
           <h2 class="h2">La revue de presse et d’idées</h2>
-          <p class="lead">Entretiens, critiques et reportages — le regard de la maison sur les scènes culturelles.</p>
+          <p class="lead">Entretiens, critiques et reportages : le regard de la maison sur les scènes culturelles.</p>
         </div>
 
         <div v-if="pressStatus === 'pending'" class="cahiers-grid" aria-busy="true">
@@ -246,7 +246,7 @@ usePageSeo({
 
         <div v-else class="issue-teaser">
           <span class="issue-teaser__num" aria-hidden="true">N°&nbsp;01</span>
-          <p>Le prochain numéro se prépare — entretiens, critiques et reportages à paraître.</p>
+          <p>Le prochain numéro se prépare : entretiens, critiques et reportages à paraître.</p>
         </div>
 
         <div class="section-foot">
@@ -261,7 +261,7 @@ usePageSeo({
         <div class="section-head">
           <p class="eyebrow">Mémoires de recherche</p>
           <h2 class="h2">Le savoir en partage</h2>
-          <p class="lead">Mémoires et thèses issus des universités partenaires — consultation et téléchargement.</p>
+          <p class="lead">Mémoires et thèses issus des universités partenaires : consultation et téléchargement.</p>
         </div>
 
         <div v-if="memoirs.length" class="memoirs-grid">
@@ -274,7 +274,7 @@ usePageSeo({
               class="memoir-card__cover"
             >
               <NuxtImg
-                :src="memoirCover(m) ?? undefined" :alt="`Couverture — ${m.title}`"
+                :src="memoirCover(m) ?? undefined" :alt="`Couverture : ${m.title}`"
                 preset="cover" width="480" :sizes="GRID3_SIZES"
                 loading="lazy" decoding="async" @error="markCoverBroken(m.id)"
               />
@@ -309,7 +309,7 @@ usePageSeo({
         <div class="section-head">
           <p class="eyebrow">Vidéos</p>
           <h2 class="h2">La culture en mouvement</h2>
-          <p class="lead">Entretiens, lectures et documentaires — les voix de la maison à l’image.</p>
+          <p class="lead">Entretiens, lectures et documentaires : les voix de la maison à l’image.</p>
         </div>
 
         <div v-if="videos.length" class="videos-grid">
@@ -350,7 +350,7 @@ usePageSeo({
           <p class="lead">
             Les Éditions du Djembé publient des romans, des essais et des recherches
             dont la valeur dépasse les frontières. Nous accompagnons les auteurs de la
-            première page jusqu’à la diffusion — avec la même exigence, quel que soit
+            première page jusqu’à la diffusion, avec la même exigence, quel que soit
             le territoire d’où ils parlent.
           </p>
           <div class="hero__ctas">

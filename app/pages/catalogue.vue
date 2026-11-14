@@ -28,7 +28,7 @@ const siteUrl = config.public.siteUrl
 useJsonLd('ld-itemlist', computed(() => ({
   '@context': 'https://schema.org',
   '@type': 'ItemList',
-  name: 'Catalogue des ouvrages — Les Éditions du Djembé d’Ébène',
+  name: 'Catalogue des ouvrages | Les Éditions du Djembé d’Ébène',
   itemListElement: books.value.map((b, i) => ({
     '@type': 'ListItem',
     position: i + 1,
@@ -50,7 +50,7 @@ usePageSeo({
     <PageHero
       eyebrow="Catalogue"
       title="Explorez nos collections"
-      lead="Romans, essais et travaux de recherche — une diversité de genres et de disciplines, une même exigence éditoriale."
+      lead="Romans, essais et travaux de recherche : une diversité de genres et de disciplines, une même exigence éditoriale."
     />
 
     <!-- À la une -->
@@ -64,7 +64,7 @@ usePageSeo({
         <NuxtLink :to="`/livres/${featured.slug || featured.id}`" class="featured">
           <div class="featured__cover">
             <NuxtImg
-              v-if="featuredCover && !featuredBroken" :src="featuredCover" :alt="`Couverture — ${featured.title}`"
+              v-if="featuredCover && !featuredBroken" :src="featuredCover" :alt="`Couverture : ${featured.title}`"
               preset="cover" width="400" height="600" :sizes="CATALOGUE_FEATURED_SIZES"
               loading="lazy" decoding="async" @error="featuredBroken = true"
             />

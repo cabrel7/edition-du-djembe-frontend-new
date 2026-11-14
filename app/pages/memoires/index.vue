@@ -62,7 +62,7 @@ usePageSeo({
     <PageHero
       eyebrow="Recherche"
       title="Le savoir en partage"
-      lead="Mémoires et thèses issus des universités — consultation, abstracts et téléchargement."
+      lead="Mémoires et thèses issus des universités : consultation, abstracts et téléchargement."
     />
 
     <section class="section section-paper">
@@ -103,7 +103,7 @@ usePageSeo({
                 class="memoir-card__cover"
               >
                 <NuxtImg
-                  :src="memoirCover(m) ?? undefined" :alt="`Couverture — ${m.title}`"
+                  :src="memoirCover(m) ?? undefined" :alt="`Couverture : ${m.title}`"
                   preset="cover" width="480" :sizes="GRID3_SIZES"
                   loading="lazy" decoding="async" @error="markCoverBroken(m.id)"
                 />

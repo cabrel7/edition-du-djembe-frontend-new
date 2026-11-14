@@ -7,13 +7,13 @@ usePageSeo({
   keywords: 'maison d’édition indépendante, Nono Gaël Tanguy, édition francophone Québec, histoire de la maison, mission éditoriale',
 })
 
-const history = `Les Éditions du Djembé d'Ébène sont nées en 2025 de la conviction de leur fondateur, Dr Nono Gaël Tanguy, qu'un nombre considérable de travaux d'envergure — mémoires, thèses et essais universitaires sur l'éveil, le changement et la contribution sociétale — demeurent trop souvent confinés aux étagères des bibliothèques et aux tiroirs de leurs auteur·rice·s. Frustré de voir ces recherches de haute qualité inaccessibles au public, il a décidé de créer une maison d'édition indépendante dont la vocation première est de faire éclore ces idées pertinentes. Rapidement, cette initiative s'est élargie pour accueillir non seulement des publications académiques, mais également des romans engagés, de la poésie militante et d'autres genres porteurs de sens.`
+const history = `Les Éditions du Djembé d'Ébène sont nées en 2025 de la conviction de leur fondateur, Dr Nono Gaël Tanguy, qu'un nombre considérable de travaux d'envergure (mémoires, thèses et essais universitaires sur l'éveil, le changement et la contribution sociétale) demeurent trop souvent confinés aux étagères des bibliothèques et aux tiroirs de leurs auteur·rice·s. Frustré de voir ces recherches de haute qualité inaccessibles au public, il a décidé de créer une maison d'édition indépendante dont la vocation première est de faire éclore ces idées pertinentes. Rapidement, cette initiative s'est élargie pour accueillir non seulement des publications académiques, mais également des romans engagés, de la poésie militante et d'autres genres porteurs de sens.`
 
-const mission = `La mission du Djembé d'Ébène est simple et ambitieuse : sortir du domaine fermé de l'université et des cercles savants les écrits qui interrogent, inspirent et éveillent les consciences. Nous offrons un accompagnement éditorial complet — de la relecture universitaire à la mise en page, de l'ISBN à la diffusion en librairies et plateformes numériques — afin de garantir à chaque auteur, qu'il vienne du monde de la recherche ou de la création littéraire, une visibilité et une portée maximale.`
+const mission = `La mission du Djembé d'Ébène est simple et ambitieuse : sortir du domaine fermé de l'université et des cercles savants les écrits qui interrogent, inspirent et éveillent les consciences. Nous offrons un accompagnement éditorial complet : de la relecture universitaire à la mise en page, de l'ISBN à la diffusion en librairies et plateformes numériques, afin de garantir à chaque auteur, qu'il vienne du monde de la recherche ou de la création littéraire, une visibilité et une portée maximale.`
 
 const vision = `Devenir la référence de l'édition francophone en matière de qualité éditoriale et d'accompagnement des auteurs, tout en contribuant activement à la promotion du savoir.`
 
-const values = `Portée par l'image du djembé — instrument d'alerte, de lien et d'éveil — et par l'ébène — symbole de résistance et de noblesse —, notre maison défend une édition fière, exigeante et engagée.`
+const values = `Portée par l'image du djembé, instrument d'alerte, de lien et d'éveil, et par l'ébène, symbole de résistance et de noblesse, notre maison défend une édition fière, exigeante et engagée.`
 
 const symbolism = `Chaque récit est un tambour, chaque livre un battement. Notre vocation est de faire résonner la parole des afro-descendants, enracinée dans la mémoire, tendue vers l'avenir. Inspirés par le djembé, instrument d'appel, de rythme et de transmission, et par le bois d'ébène, symbole de noblesse, de profondeur et de résistance, nous défendons une édition exigeante, poétique et libre.`
 
@@ -44,8 +44,11 @@ const coreValues = [
           <h2 class="h2" style="margin-top:0.75rem">Née d’une conviction</h2>
           <p class="detail-prose">{{ history }}</p>
         </div>
-        <div class="about-history__visual" aria-hidden="true">
-          <AppIcon name="book" :size="64" />
+        <div class="about-history__visual">
+          <img
+            src="/fondateur.webp" alt="Dr Nono Gaël Tanguy, fondateur des Éditions du Djembé d’Ébène"
+            width="683" height="911" loading="lazy" decoding="async"
+          >
         </div>
       </div>
     </section>
@@ -136,7 +139,8 @@ const coreValues = [
 <style scoped>
 .about-history { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; }
 .about-history__text { display: grid; gap: 1rem; }
-.about-history__visual { aspect-ratio: 4/3; border-radius: var(--radius); background: linear-gradient(145deg, var(--paper-2), var(--paper)); border: 1px solid var(--line); display: grid; place-items: center; color: var(--green); }
+.about-history__visual { aspect-ratio: 3/4; max-width: 24rem; width: 100%; justify-self: center; border-radius: var(--radius); overflow: hidden; background: linear-gradient(145deg, var(--paper-2), var(--paper)); border: 1px solid var(--line); }
+.about-history__visual img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
 .founder { text-align: center; display: grid; gap: 1rem; justify-items: center; }
 .founder__quote { margin: 1rem 0 0; padding: 1.25rem 1.75rem; border-left: 3px solid var(--gold); font-size: 1.2rem; font-style: italic; color: var(--paper); text-align: left; max-width: 58ch; }
 .founder__bio { color: var(--on-dark-2); max-width: 54ch; line-height: 1.65; }
@@ -144,6 +148,6 @@ const coreValues = [
 .protocol-h { font-weight: 700; font-size: 1.05rem; margin-top: 1.25rem; margin-bottom: 0.4rem; color: var(--ink-900); }
 @media (max-width: 760px) {
   .about-history { grid-template-columns: 1fr; }
-  .about-history__visual { display: none; }
+  .about-history__visual { max-width: 18rem; }
 }
 </style>

@@ -51,7 +51,7 @@ watch(open, (v) => {
     :class="{ 'is-scrolled': scrolled, 'is-hidden': hidden, 'is-open': open, 'is-on-light': onLightHero }"
   >
     <div class="hdr__bar container">
-      <NuxtLink to="/" class="hdr__logo" aria-label="Les Éditions du Djembé d’Ébène — accueil">
+      <NuxtLink to="/" class="hdr__logo" aria-label="Les Éditions du Djembé d’Ébène, accueil">
         <img src="/logo.png" alt="" width="48" height="48" loading="eager" fetchpriority="high">
         <span class="hdr__word">Les Éditions<br>du Djembé d’Ébène</span>
       </NuxtLink>

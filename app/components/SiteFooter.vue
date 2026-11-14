@@ -64,13 +64,26 @@ const services = [
 
       <div class="site-footer__bottom">
         <span>© {{ year }} Les Éditions du Djembé d’Ébène. Tous droits réservés.</span>
-        <span>Québec · Canada</span>
+        <ul class="site-footer__social" aria-label="Réseaux sociaux">
+          <li v-for="s in SOCIAL_LINKS" :key="s.name">
+            <a :href="s.href" target="_blank" rel="noopener noreferrer" :aria-label="s.label">
+              <AppIcon :name="s.icon" :size="18" />
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
   </footer>
 </template>
 
 <style scoped>
+.site-footer__social { display: flex; gap: 0.5rem; }
+.site-footer__social a {
+  display: grid; place-items: center; width: 2.25rem; height: 2.25rem;
+  border-radius: 999px; border: 1px solid var(--line-light); color: var(--on-dark-2);
+  transition: color 0.2s, border-color 0.2s;
+}
+.site-footer__social a:hover, .site-footer__social a:focus-visible { color: var(--gold-300); border-color: var(--gold-300); }
 .site-footer__tagline {
   margin-top: 1rem;
   max-width: 34ch;

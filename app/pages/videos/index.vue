@@ -41,7 +41,7 @@ usePageSeo({
     <PageHero
       eyebrow="Vidéos"
       title="La culture en mouvement"
-      lead="Entretiens, lectures et documentaires — les voix de la maison à l’image."
+      lead="Entretiens, lectures et documentaires : les voix de la maison à l’image."
     />
 
     <section class="section">

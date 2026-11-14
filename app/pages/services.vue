@@ -78,7 +78,7 @@ const faqs = [
     <PageHero
       eyebrow="Services"
       title="Un accompagnement complet"
-      lead="De la première ligne à la dernière page — édition, correction, impression et diffusion."
+      lead="De la première ligne à la dernière page : édition, correction, impression et diffusion."
     />
 
     <section class="section section-paper">
