@@ -81,7 +81,7 @@ usePageSeo({
                 <NuxtImg
                   v-if="thumbOf(v)" :src="thumbOf(v)!" :alt="v.title"
                   preset="cover" width="640" height="360" :sizes="VIDEO_SIZES"
-                  loading="lazy" decoding="async" @error="markBroken(v.id)"
+                  loading="lazy" decoding="async" @error="retryImage($event, () => markBroken(v.id))"
                 />
                 <div v-else class="video-card__fallback" aria-hidden="true" />
                 <span class="video-card__play"><AppIcon name="play" :size="22" /></span>

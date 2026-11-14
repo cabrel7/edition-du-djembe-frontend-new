@@ -85,7 +85,7 @@ useJsonLd('ld-article', computed(() => {
           <img
             :src="image" :alt="article?.title"
             width="1200" height="630" loading="lazy" decoding="async"
-            @error="imageBroken = true"
+            @error="retryImage($event, () => (imageBroken = true))"
           >
         </div>
 

@@ -59,7 +59,7 @@ usePageSeo({
               v-if="featured.image && articleImage(featured.image) && !broken.has(featured.id)"
               :src="articleImage(featured.image) ?? undefined" :alt="featured.title"
               preset="cover" width="1200" height="675" :sizes="FEATURED_ARTICLE_SIZES"
-              loading="lazy" decoding="async" @error="broken.add(featured.id)"
+              loading="lazy" decoding="async" @error="retryImage($event, () => broken.add(featured.id))"
             />
             <div v-else class="featured__fallback" aria-hidden="true">
               <AppIcon name="newspaper" :size="48" />
@@ -114,7 +114,7 @@ usePageSeo({
                   v-if="a.image && articleImage(a.image) && !broken.has(a.id)"
                   :src="articleImage(a.image) ?? undefined" :alt="a.title"
                   preset="cover" width="640" height="360" :sizes="GRID3_SIZES"
-                  loading="lazy" decoding="async" @error="broken.add(a.id)"
+                  loading="lazy" decoding="async" @error="retryImage($event, () => broken.add(a.id))"
                 />
                 <div v-else class="news-card__fallback" aria-hidden="true">
                   <AppIcon name="newspaper" :size="36" />

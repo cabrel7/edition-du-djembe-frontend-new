@@ -122,7 +122,7 @@ usePageSeo({
               v-if="featuredCover && !featuredCoverBroken" :src="featuredCover" :alt="`Couverture : ${featuredBook.title}`"
               preset="cover" width="400" height="600" :sizes="HOME_FEATURED_SIZES"
               loading="eager" fetchpriority="high" decoding="async"
-              @error="featuredCoverBroken = true"
+              @error="retryImage($event, () => (featuredCoverBroken = true))"
             />
             <div v-else class="book__placeholder" aria-hidden="true">
               <svg viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -230,7 +230,7 @@ usePageSeo({
                 :src="pressCover(pr.cover_image) ?? undefined" :alt="pr.title"
                 preset="cover" width="640" height="480" :sizes="GRID3_SIZES"
                 loading="lazy" decoding="async"
-                @error="markThumbBroken(pr.id)"
+                @error="retryImage($event, () => markThumbBroken(pr.id))"
               />
               <div v-else class="cahier-card__fallback" aria-hidden="true">
                 <AppIcon name="newspaper" :size="40" />
@@ -276,7 +276,7 @@ usePageSeo({
               <NuxtImg
                 :src="memoirCover(m) ?? undefined" :alt="`Couverture : ${m.title}`"
                 preset="cover" width="480" :sizes="GRID3_SIZES"
-                loading="lazy" decoding="async" @error="markCoverBroken(m.id)"
+                loading="lazy" decoding="async" @error="retryImage($event, () => markCoverBroken(m.id))"
               />
             </div>
             <div class="memoir-card__top">
@@ -323,7 +323,7 @@ usePageSeo({
                 :src="coverUrl('video', v.thumbnail) ?? undefined" :alt="v.title"
                 preset="cover" width="640" height="360" :sizes="VIDEO_SIZES"
                 loading="lazy" decoding="async"
-                @error="markThumbBroken(v.id)"
+                @error="retryImage($event, () => markThumbBroken(v.id))"
               />
               <div v-else class="video-card__fallback" aria-hidden="true" />
               <span class="video-card__play"><AppIcon name="play" :size="22" /></span>

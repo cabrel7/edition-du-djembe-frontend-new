@@ -99,7 +99,7 @@ useSeoMeta({
           <img
             :src="heroCover" :alt="review.title"
             width="1200" height="630" loading="lazy" decoding="async"
-            @error="broken.add(review.id)"
+            @error="retryImage($event, () => broken.add(review.id))"
           >
         </div>
       </div>
@@ -135,7 +135,7 @@ useSeoMeta({
             <div class="press-card__media">
               <img
                 v-if="s.cover_image && pressCover(s.cover_image) && !broken.has(s.id)" :src="pressCover(s.cover_image)" :alt="s.title"
-                loading="lazy" decoding="async" width="640" height="360" @error="broken.add(s.id)"
+                loading="lazy" decoding="async" width="640" height="360" @error="retryImage($event, () => broken.add(s.id))"
               >
               <div v-else class="press-card__fallback" aria-hidden="true">
                 <AppIcon name="newspaper" :size="36" />

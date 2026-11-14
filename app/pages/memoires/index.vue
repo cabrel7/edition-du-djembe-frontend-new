@@ -105,7 +105,7 @@ usePageSeo({
                 <NuxtImg
                   :src="memoirCover(m) ?? undefined" :alt="`Couverture : ${m.title}`"
                   preset="cover" width="480" :sizes="GRID3_SIZES"
-                  loading="lazy" decoding="async" @error="markCoverBroken(m.id)"
+                  loading="lazy" decoding="async" @error="retryImage($event, () => markCoverBroken(m.id))"
                 />
               </div>
               <div class="memoir-card__top">

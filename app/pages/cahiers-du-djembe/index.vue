@@ -98,7 +98,7 @@ usePageSeo({
                 v-if="r.cover_image && pressCover(r.cover_image) && !broken.has(r.id)"
                 :src="pressCover(r.cover_image) ?? undefined" :alt="r.title"
                 preset="cover" width="640" height="480" :sizes="GRID3_SIZES"
-                loading="lazy" decoding="async" @error="broken.add(r.id)"
+                loading="lazy" decoding="async" @error="retryImage($event, () => broken.add(r.id))"
               />
               <div v-else class="cahier-card__fallback" aria-hidden="true">
                 <AppIcon name="newspaper" :size="40" />

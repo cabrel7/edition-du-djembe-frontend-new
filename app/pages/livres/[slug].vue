@@ -86,7 +86,7 @@ useJsonLd('ld-book', computed(() => {
           <img
             v-if="cover && !coverBroken" :src="cover" :alt="`Couverture : ${book?.title}`"
             width="480" height="720" loading="eager" fetchpriority="high" decoding="async"
-            @error="coverBroken = true"
+            @error="retryImage($event, () => (coverBroken = true))"
           >
           <div v-else class="page-book__cover-fallback" aria-hidden="true" />
         </div>

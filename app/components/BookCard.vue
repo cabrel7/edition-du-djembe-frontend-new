@@ -17,7 +17,7 @@ const coverBroken = ref(false)
         preset="cover" width="400" height="600" :sizes="BOOK_SIZES"
         loading="lazy" decoding="async"
         style="width:100%;height:100%;object-fit:cover"
-        @error="coverBroken = true"
+        @error="retryImage($event, () => (coverBroken = true))"
       />
       <div v-else class="book__placeholder" aria-hidden="true">
         <svg viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">

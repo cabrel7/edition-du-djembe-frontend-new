@@ -92,7 +92,7 @@ useJsonLd('ld-memoir', computed(() => {
           <img
             :src="cover" :alt="`Couverture : ${memoir?.title}`"
             width="400" height="600" loading="lazy" decoding="async"
-            @error="coverBroken = true"
+            @error="retryImage($event, () => (coverBroken = true))"
           >
         </div>
 

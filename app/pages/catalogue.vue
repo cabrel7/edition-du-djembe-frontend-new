@@ -66,7 +66,7 @@ usePageSeo({
             <NuxtImg
               v-if="featuredCover && !featuredBroken" :src="featuredCover" :alt="`Couverture : ${featured.title}`"
               preset="cover" width="400" height="600" :sizes="CATALOGUE_FEATURED_SIZES"
-              loading="lazy" decoding="async" @error="featuredBroken = true"
+              loading="lazy" decoding="async" @error="retryImage($event, () => (featuredBroken = true))"
             />
             <div v-else class="book__placeholder" aria-hidden="true">
               <svg viewBox="0 0 80 120" fill="none" xmlns="http://www.w3.org/2000/svg">
