@@ -30,6 +30,15 @@ export interface Article {
   views_count: number | null
 }
 
+export interface Partner {
+  id: number
+  nom: string
+  image: string | null
+  website: string | null
+  type: string | null
+  description: string | null
+}
+
 export interface Memoir {
   id: number
   title: string

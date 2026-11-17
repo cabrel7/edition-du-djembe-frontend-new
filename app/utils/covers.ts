@@ -13,7 +13,7 @@ function apiOrigin(origin?: string): string {
 }
 
 export function coverUrl(
-  kind: 'book' | 'article' | 'memoir' | 'video' | 'press',
+  kind: 'book' | 'article' | 'memoir' | 'video' | 'press' | 'partner',
   filename: string | null | undefined,
   origin?: string,
 ): string | null {
@@ -25,6 +25,7 @@ export function coverUrl(
     memoir: 'memoirs/covers',
     video: 'video',
     press: 'press-reviews/covers',
+    partner: 'partners',
   }
   // Les anciennes lignes stockent un chemin déjà préfixé (books/covers/xxx.jpg) ;
   // les plus récentes un simple nom de fichier.

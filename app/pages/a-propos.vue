@@ -101,6 +101,9 @@ const coreValues = [
       </div>
     </section>
 
+    <!-- Partenaires -->
+    <PartnersSection />
+
     <!-- Fondateur -->
     <section class="section section-dark">
       <div class="container-narrow founder">
