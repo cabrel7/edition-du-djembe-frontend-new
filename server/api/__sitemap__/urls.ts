@@ -34,7 +34,8 @@ const BOOT_LISTS = [
 ] as const
 
 const MAX_PAGES_PER_LIST = 50
-const PRESS_REVIEWS_PER_PAGE = 100
+/** Aligné sur le plafond MAX_PER_PAGE du backend (PressReviewController). */
+const PRESS_REVIEWS_PER_PAGE = 50
 
 export default defineEventHandler(async () => {
   const config = useRuntimeConfig()

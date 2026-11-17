@@ -34,10 +34,16 @@ function filenameFrom(header: string | null): string | null {
  * un nom sans extension (colonne `extension` absente côté books → « Titre. »)
  * ou, en théorie, des guillemets dans un titre.
  */
+const KEPT_EXTENSIONS = ['pdf', 'doc', 'docx'] as const
+
 function safeFilename(raw: string | null, fallback: string): string {
   const cleaned = (raw ?? '').replace(/["\\\r\n]/g, '').trim()
-  const base = cleaned.replace(/\.pdf$/i, '').replace(/[. ]+$/, '')
-  return base ? `${base}.pdf` : fallback
+  // Le backend renvoie désormais l'extension réelle du fichier (pdf, doc, docx) :
+  // on la conserve au lieu de forcer « .pdf » (sinon « Titre.docx.pdf »).
+  const ext = cleaned.match(/\.([a-z0-9]{1,5})$/i)?.[1]?.toLowerCase()
+  const keep = KEPT_EXTENSIONS.find(e => e === ext) ?? 'pdf'
+  const base = cleaned.replace(new RegExp(`\\.${keep}$`, 'i'), '').replace(/[. ]+$/, '')
+  return base ? `${base}.${keep}` : fallback
 }
 
 export default defineEventHandler(async (event) => {
